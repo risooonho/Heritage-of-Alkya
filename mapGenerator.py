@@ -129,28 +129,33 @@ class App:
 
 	def filler_action(self, pos):
 		x, y = pos
-		if 0 <= x <= self.map.size[0]-1 and 0 <= y <= self.map.size[1]-1:
-			for x1, line in enumerate(self.current_tiles):
-				for y1, tile in enumerate(line):
-					tile_hitbox = self.map.tileset[tile].hitbox
-					if not (x+x1 >= self.map.size[0] or y+y1 >= self.map.size[1]):
-						for i in range(tile_hitbox+1, 3):
-							self.map.tile_map[i][x+x1][y+y1] = []
-
-						seen = False
-						tile_list = []
-						for tile_2 in self.map.tile_map[tile_hitbox][x+x1][y+y1]:
-							if tile_2 == tile:
-								seen = True
-							if not seen:
-								tile_list.append(tile_2)
-						tile_list.append(tile)
-						self.map.tile_map[tile_hitbox][x+x1][y+y1] = tile_list
-
-			self.filler_action((x-1, y))
-			self.filler_action((x+1, y))
-			self.filler_action((x, y+1))
-			self.filler_action((x, y-1))
+		if len(self.current_tiles) == 1 and len(self.current_tiles[0]) == 1:
+			tile_hitbox = self.map.tileset[self.current_tiles[0][0]].hitbox
+			cibled_tile = self.map.tile_map[tile_hitbox][x][y][-1]
+			replace_tile = self.current_tiles[0][0]
+			pile = []
+			pile.append((x, y))
+			while pile != []:
+				x1, y1 = pile.pop()
+				for i in range(tile_hitbox+1, 3):
+					self.map.tile_map[i][x1][y1] = [("B", 0)]
+				seen = False
+				tile_list = []
+				for tile_2 in self.map.tile_map[tile_hitbox][x1][y1]:
+					if tile_2 == replace_tile:
+						seen = True
+					if not seen:
+						tile_list.append(tile_2)
+				tile_list.append(replace_tile)
+				self.map.tile_map[tile_hitbox][x1][y1] = tile_list
+				if not x1 == self.map.size[0]-1 and self.map.tile_map[tile_hitbox][x1+1][y1][-1] == cibled_tile:
+					pile.append((x1+1, y1))
+				if not x1 == 0 and self.map.tile_map[tile_hitbox][x1-1][y1][-1] == cibled_tile:
+					pile.append((x1-1, y1))
+				if not y1 == self.map.size[1]-1 and self.map.tile_map[tile_hitbox][x1][y1+1][-1] == cibled_tile:
+					pile.append((x1, y1+1))
+				if not y1 == 0 and self.map.tile_map[tile_hitbox][x1][y1-1][-1] == cibled_tile:
+					pile.append((x1, y1-1))
 
 	def mainloop(self):
 		""" Lancement de l'application """
@@ -254,7 +259,7 @@ class App:
 										tile_hitbox = self.map.tileset[tile].hitbox
 										if not (tile_pos[0]+x >= self.map.size[0] or tile_pos[1]+y >= self.map.size[1]):
 											for i in range(tile_hitbox+1, 3):
-												self.map.tile_map[i][tile_pos[0]+x][tile_pos[1]+y] = []
+												self.map.tile_map[i][tile_pos[0]+x][tile_pos[1]+y] = [("B", 0)]
 
 											seen = False
 											tile_list = []
@@ -308,7 +313,7 @@ class App:
 						tile_hitbox = self.map.tileset[tile].hitbox
 						if not (tile_pos[0]+x >= self.map.size[0] or tile_pos[1]+y >= self.map.size[1]):
 							for i in range(tile_hitbox+1, 3):
-								self.map.tile_map[i][tile_pos[0]+x][tile_pos[1]+y] = []
+								self.map.tile_map[i][tile_pos[0]+x][tile_pos[1]+y] = [("B", 0)]
 
 							seen = False
 							tile_list = []
