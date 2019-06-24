@@ -127,6 +127,31 @@ class App:
 				else:
 					self.current_tiles[x-xmin][y-ymin] = (self.current_tileset_type, y*8+x)
 
+	def filler_action(self, pos):
+		x, y = pos
+		if 0 <= x <= self.map.size[0]-1 and 0 <= y <= self.map.size[1]-1:
+			for x1, line in enumerate(self.current_tiles):
+				for y1, tile in enumerate(line):
+					tile_hitbox = self.map.tileset[tile].hitbox
+					if not (x+x1 >= self.map.size[0] or y+y1 >= self.map.size[1]):
+						for i in range(tile_hitbox+1, 3):
+							self.map.tile_map[i][x+x1][y+y1] = []
+
+						seen = False
+						tile_list = []
+						for tile_2 in self.map.tile_map[tile_hitbox][x+x1][y+y1]:
+							if tile_2 == tile:
+								seen = True
+							if not seen:
+								tile_list.append(tile_2)
+						tile_list.append(tile)
+						self.map.tile_map[tile_hitbox][x+x1][y+y1] = tile_list
+
+			self.filler_action((x-1, y))
+			self.filler_action((x+1, y))
+			self.filler_action((x, y+1))
+			self.filler_action((x, y-1))
+
 	def mainloop(self):
 		""" Lancement de l'application """
 		self.running = True
@@ -151,6 +176,15 @@ class App:
 						# On crée une nouvelle map
 						self.map = GE.mapsystem.Map((17, 13), 0)
 
+					elif event.key == K_F2:
+						self.current_tool = "pencil"
+
+					elif event.key == K_F3:
+						self.current_tool = "rectangle"
+
+					elif event.key == K_F4:
+						self.current_tool = "filler"
+
 				elif event.type == MOUSEBUTTONDOWN:
 					if 40+8*48 <= mouse_pos_x <= WINDOW_X-30 and WINDOW_Y-30 <= mouse_pos_y <= WINDOW_Y-10:
 						# On débloque le scroll x de la map
@@ -174,7 +208,8 @@ class App:
 							self.start_selection = (mouse_pos_x, mouse_pos_y)
 
 						else:
-							self.filler = True
+							pos = (mouse_pos_x+self.camera[0]-40-8*48)//48, (mouse_pos_y+self.camera[0]-10)//48
+							self.filler_action(pos)
 
 					elif 10 <= mouse_pos_x <= 10+8*48 and 10 <= mouse_pos_y <= WINDOW_Y-30:
 						# On débloque la selection de tiles
@@ -284,10 +319,6 @@ class App:
 									tile_list.append(tile_2)
 							tile_list.append(tile)
 							self.map.tile_map[tile_hitbox][tile_pos[0]+x][tile_pos[1]+y] = tile_list
-
-
-			if self.filler:
-				pass
 
 			# Affichage de la frame
 			self.display.fill((255, 255, 255))
