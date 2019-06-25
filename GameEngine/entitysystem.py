@@ -7,3 +7,10 @@ __authors__ = "Lightpearl"
 #§ Importation des modules complémentaires nécéssaires
 from . import constants as cts
 import pygame
+
+#§ Création des objets du module
+class BaseEntity:
+	"""
+	"""
+	def __init__(self):
+		pass
