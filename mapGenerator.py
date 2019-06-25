@@ -199,10 +199,55 @@ class App:
 
 
 	def save_current_map(self):
-		pass
+		fenetre = tk.Tk()
+		fenetre.geometry("0x0")
+		filename = tkfd.asksaveasfilename(title="Enregistrer la map", defaultextension=".sha", filetypes=[("Map", ".sha"), ("Tous", "*")], initialdir="GameAssets\\Maps\\")
+		fenetre.destroy()
+		if not filename == "":
+			with open(filename, "w") as file:
+				file.write("Name={}\n".format(self.map.name))
+				file.write("Size={}\n".format(self.map.size))
+				file.write("TilesetId={}\n".format(self.map.tileset.tileset_id))
+				file.write("BGM={}\n".format(self.map.BGM))
+				tiles = []
+				for x in range(self.map.size[0]):
+					for y in range(self.map.size[1]):
+						for level in range(3):
+							for tile in self.map.tile_map[level][x][y]:
+								if not tile == ("B", 0):
+									tiles.append(str((tile, (x, y))))
+				file.write("Tiles={}\n".format(";".join(tiles)))
+				file.close()
 
 	def load_map(self):
-		pass
+		fenetre = tk.Tk()
+		fenetre.geometry("0x0")
+		filename = tkfd.askopenfilename(title="Ouvrir une map", defaultextension=".sha", filetypes=[("Map", ".sha"), ("Tous", "*")], initialdir="GameAssets\\Maps\\")
+		fenetre.destroy()
+		if not filename == "":
+			name = ""
+			size = (-1, -1)
+			BGM = ""
+			tileset_id = -1
+			tiles = []
+			with open(filename, "r") as file:
+				for line in file:
+					if not line == "":
+						label, content = line[:-1].split("=")
+						if label == "Name":
+							name = content
+						elif label == "Size":
+							size = eval(content)
+						elif label == "BGM":
+							BGM = content
+						elif label == "TilesetId":
+							tileset_id = int(content)
+						elif label == "Tiles":
+							tiles = [eval(tile) for tile in content.split(";")]
+				self.map = GE.mapsystem.Map(size, tileset_id, tiles)
+				self.map.name = name
+				self.map.BGM = BGM
+				file.close()
 
 	def mainloop(self):
 		""" Lancement de l'application """
@@ -224,6 +269,7 @@ class App:
 					self.fps = max(MIN_FPS, clock.get_fps())
 
 				elif event.type == KEYDOWN:
+					tkey = pygame.key.get_pressed()
 					if event.key == K_F1:
 						# On crée une nouvelle map
 						self.create_new_map()
@@ -242,6 +288,10 @@ class App:
 
 					elif event.key == K_F6:
 						self.load_map()
+
+					elif event.key == K_s:
+						if tkey[K_LCTRL] or tkey[K_RCTRL]:
+							self.save_current_map()
 
 				elif event.type == MOUSEBUTTONDOWN:
 					if 40+8*48 <= mouse_pos_x <= WINDOW_X-30 and WINDOW_Y-30 <= mouse_pos_y <= WINDOW_Y-10:
@@ -349,7 +399,7 @@ class App:
 				self.camera[0] = int(max(0, min(self.map.size[0]*48-21*48, (mouse_pos_x-8*48-40-scroll_x_map_size/2)/(21*48)*(self.map.size[0]*48))))
 
 			if self.scrolling_y_map:
-				self.camera[1] = int(max(0, min(self.map.size[1]*48-21*48, (mouse_pos_y-8*48-40-scroll_y_map_size/2)/(21*48)*(self.map.size[1]*48))))
+				self.camera[1] = int(max(0, min(self.map.size[1]*48-21*48, (mouse_pos_y-10-scroll_y_map_size/2)/(21*48)*(self.map.size[1]*48))))
 
 			if self.scrolling_tileset:
 				self.tileset_scroll = int(max(0, min(nb_tile//8*48-21*48, (mouse_pos_y-10-scroll_tileset_size/2)/(21*48)*(nb_tile//8*48))))

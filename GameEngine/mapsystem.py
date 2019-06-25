@@ -7,7 +7,6 @@ __authors__ = "Lightpearl"
 #§ Importation des modules complémentaires nécéssaires
 from pygame.locals import HWSURFACE, SRCALPHA
 from . import constants as cts
-from . import systemComponents as core
 import threading
 import pygame
 import time
@@ -1400,6 +1399,9 @@ class Map:
 			tile_x, tile_y = tile_pos
 			tile = self.tileset[tile_id]
 			self.tile_map[tile.hitbox][tile_x][tile_y].append(tile_id)
+
+	def load_from_file(self, filename):
+		pass
 
 	def render(self, level, fps, camera_pos):
 		self.layouts[level].fill((0, 0, 0, 0))
