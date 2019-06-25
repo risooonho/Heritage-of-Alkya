@@ -6,6 +6,8 @@ __version__ = "1.0.0"
 __authors__ = "Lightpearl"
 
 import pygame
+import tkinter as tk
+import tkinter.filedialog as tkfd
 import threading
 import sys
 
@@ -45,7 +47,7 @@ WINDOW_Y = 40+21*48
 GE.mapsystem.cts.TILE_NUMBER_X = 21
 GE.mapsystem.cts.TILE_NUMBER_Y = 21
 GE.mapsystem.cts.WINDOW_SIZE = (21*48, 21*48)
-GE.mapsystem.cts.TILE_ANIMATION_PERIOD = 0.1
+GE.mapsystem.cts.TILE_ANIMATION_PERIOD = 0.25
 
 #§ Création des objets du jeu
 class App:
@@ -157,6 +159,51 @@ class App:
 				if not y1 == 0 and self.map.tile_map[tile_hitbox][x1][y1-1][-1] == cibled_tile:
 					pile.append((x1, y1-1))
 
+	def create_new_map(self):
+		name = ""
+		size = (-1, -1)
+		tileset_id = -1
+		fenetre = tk.Tk()
+		fenetre.title("Créer un nouvelle Map")
+		fenetre.resizable(False, False)
+		label_name = tk.Label(fenetre, text="Nom de la map :")
+		label_name.grid(row=0, column=0)
+		entry_name = tk.Entry(fenetre, width=20)
+		entry_name.grid(row=0, column=1)
+		label_size = tk.Label(fenetre, text="Dimension de la map")
+		label_size.grid(row=1, column=0)
+		frame_size = tk.Frame(fenetre)
+		entry_x_size = tk.Entry(frame_size, width=10)
+		entry_x_size.grid(row=0, column=0)
+		entry_y_size = tk.Entry(frame_size, width=10)
+		entry_y_size.grid(row=0, column=1)
+		frame_size.grid(row=1, column=1)
+		label_tileset = tk.Label(fenetre, text="ID du tileset")
+		label_tileset.grid(row=2, column=0)
+		entry_tileset = tk.Entry(fenetre, width=2)
+		entry_tileset.grid(row=2, column=1)
+		def new_map():
+			if not entry_name.get() == "":
+				name=entry_name.get()
+			if not entry_x_size == "" or entry_y_size == "":
+				size = (int(entry_x_size.get()), int(entry_y_size.get()))
+			if not entry_tileset.get() == "":
+				tileset_id = int(entry_tileset.get())
+			if not name == "" or size == (-1, -1) or tileset_id == -1:
+				self.map = GE.mapsystem.Map(size, tileset_id)
+				self.map.name = name
+			fenetre.destroy()
+		button_validate = tk.Button(fenetre, text="Valider", command=new_map)
+		button_validate.grid(row=3, column=1)
+		fenetre.mainloop()
+
+
+	def save_current_map(self):
+		pass
+
+	def load_map(self):
+		pass
+
 	def mainloop(self):
 		""" Lancement de l'application """
 		self.running = True
@@ -179,7 +226,7 @@ class App:
 				elif event.type == KEYDOWN:
 					if event.key == K_F1:
 						# On crée une nouvelle map
-						self.map = GE.mapsystem.Map((17, 13), 0)
+						self.create_new_map()
 
 					elif event.key == K_F2:
 						self.current_tool = "pencil"
@@ -189,6 +236,12 @@ class App:
 
 					elif event.key == K_F4:
 						self.current_tool = "filler"
+
+					elif event.key == K_F5:
+						self.save_current_map()
+
+					elif event.key == K_F6:
+						self.load_map()
 
 				elif event.type == MOUSEBUTTONDOWN:
 					if 40+8*48 <= mouse_pos_x <= WINDOW_X-30 and WINDOW_Y-30 <= mouse_pos_y <= WINDOW_Y-10:

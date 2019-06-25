@@ -1383,10 +1383,11 @@ class Map:
 	Objet définissant la carte sur laquelle se déplacent les entitées et le joueur
 	"""
 	def __init__(self, size, tileset_id, tiles=[]):
+		self.name = "New Map"
+		self.BGM = ""
 		self.size = size
 		self.tileset = TILESETS_OBJECTS[tileset_id]
 		self.tile_map = [[[[("B", 0)] for _ in range(self.size[1])] for _ in range(self.size[0])] for _ in range(3)]
-		print(self.tile_map)
 		self.load_tiles(tiles)
 
 		self.layouts = [pygame.Surface(cts.WINDOW_SIZE, HWSURFACE | SRCALPHA) for _ in range(3)]
