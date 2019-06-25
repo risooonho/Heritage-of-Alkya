@@ -34,7 +34,7 @@ def run_thread():
 thread = threading.Thread(target=run_thread)
 thread.start()
 
-#§ Importation des modulmes complémentaires nécéssaires
+#§ Importation des modules complémentaires nécéssaires
 import GameEngine as GE
 from GameEngine.constants import *
 
