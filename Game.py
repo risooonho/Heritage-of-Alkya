@@ -8,3 +8,5 @@ __authors__ = "Lightpearl"
 #§ Importation des modules nécéssaires
 import GameEngine as GE
 import GameEngine.constants as cts
+
+GE.launch()
