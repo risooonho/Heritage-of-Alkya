@@ -1170,7 +1170,164 @@ class Tile:
 			self.pictures[47].append(tile.convert_alpha())
 
 		elif type == "wall":
-			pass
+			tile1 = pygame.Surface((cts.TILE_SIZE/2, cts.TILE_SIZE), HWSURFACE | SRCALPHA)
+			tile2 = pygame.Surface((cts.TILE_SIZE/2, cts.TILE_SIZE), HWSURFACE | SRCALPHA)
+			tile = pygame.Surface((cts.TILE_SIZE, cts.TILE_SIZE), HWSURFACE | SRCALPHA)
+
+			# Tile 0
+			tile1.fill((0, 0, 0, 0))
+			tile2.fill((0, 0, 0, 0))
+			tile.fill((0, 0, 0, 0))
+			tile1.blit(tiles_pictures, (-pos[0], -pos[1]-cts.TILE_SIZE))
+			tile2.blit(tiles_pictures, (-pos[0]-3*cts.TILE_SIZE/2, -pos[1]-cts.TILE_SIZE))
+			tile.blit(tile1, (0, 0))
+			tile.blit(tile2, (cts.TILE_SIZE/2, 0))
+			self.pictures[0].append(tile.convert_alpha())
+			self.pictures[13].append(tile.convert_alpha())
+
+			# Tile 1
+			tile1.fill((0, 0, 0, 0))
+			tile2.fill((0, 0, 0, 0))
+			tile.fill((0, 0, 0, 0))
+			tile1.blit(tiles_pictures, (-pos[0], -pos[1]-cts.TILE_SIZE))
+			tile2.blit(tiles_pictures, (-pos[0]-cts.TILE_SIZE/2, -pos[1]-cts.TILE_SIZE))
+			tile.blit(tile1, (0, 0))
+			tile.blit(tile2, (cts.TILE_SIZE/2, 0))
+			self.pictures[2].append(tile.convert_alpha())
+			self.pictures[15].append(tile.convert_alpha())
+			self.pictures[26].append(tile.convert_alpha())
+
+			# Tile 2
+			tile1.fill((0, 0, 0, 0))
+			tile2.fill((0, 0, 0, 0))
+			tile.fill((0, 0, 0, 0))
+			tile1.blit(tiles_pictures, (-pos[0]-cts.TILE_SIZE, -pos[1]-cts.TILE_SIZE))
+			tile2.blit(tiles_pictures, (-pos[0]-3*cts.TILE_SIZE/2, -pos[1]-cts.TILE_SIZE))
+			tile.blit(tile1, (0, 0))
+			tile.blit(tile2, (cts.TILE_SIZE/2, 0))
+			self.pictures[5].append(tile.convert_alpha())
+			self.pictures[18].append(tile.convert_alpha())
+			self.pictures[35].append(tile.convert_alpha())
+
+			# Tile 3
+			tile1.fill((0, 0, 0, 0))
+			tile2.fill((0, 0, 0, 0))
+			tile.fill((0, 0, 0, 0))
+			tile1.blit(tiles_pictures, (-pos[0]-cts.TILE_SIZE, -pos[1]-cts.TILE_SIZE))
+			tile2.blit(tiles_pictures, (-pos[0]-cts.TILE_SIZE/2, -pos[1]-cts.TILE_SIZE))
+			tile.blit(tile1, (0, 0))
+			tile.blit(tile2, (cts.TILE_SIZE/2, 0))
+			self.pictures[8].append(tile.convert_alpha())
+			self.pictures[21].append(tile.convert_alpha())
+			self.pictures[29].append(tile.convert_alpha())
+			self.pictures[38].append(tile.convert_alpha())
+			self.pictures[43].append(tile.convert_alpha())
+
+			# Tile 4
+			tile1.fill((0, 0, 0, 0))
+			tile2.fill((0, 0, 0, 0))
+			tile.fill((0, 0, 0, 0))
+			tile1.blit(tiles_pictures, (-pos[0], -pos[1]))
+			tile2.blit(tiles_pictures, (-pos[0]-3*cts.TILE_SIZE/2, -pos[1]))
+			tile.blit(tile1, (0, 0))
+			tile.blit(tile2, (cts.TILE_SIZE/2, 0))
+			self.pictures[1].append(tile.convert_alpha())
+
+			# Tile 5
+			tile1.fill((0, 0, 0, 0))
+			tile2.fill((0, 0, 0, 0))
+			tile.fill((0, 0, 0, 0))
+			tile1.blit(tiles_pictures, (-pos[0], -pos[1]))
+			tile2.blit(tiles_pictures, (-pos[0]-cts.TILE_SIZE/2, -pos[1]))
+			tile.blit(tile1, (0, 0))
+			tile.blit(tile2, (cts.TILE_SIZE/2, 0))
+			self.pictures[3].append(tile.convert_alpha())
+			self.pictures[4].append(tile.convert_alpha())
+
+			# Tile 6
+			tile1.fill((0, 0, 0, 0))
+			tile2.fill((0, 0, 0, 0))
+			tile.fill((0, 0, 0, 0))
+			tile1.blit(tiles_pictures, (-pos[0]-cts.TILE_SIZE, -pos[1]))
+			tile2.blit(tiles_pictures, (-pos[0]-3*cts.TILE_SIZE/2, -pos[1]))
+			tile.blit(tile1, (0, 0))
+			tile.blit(tile2, (cts.TILE_SIZE/2, 0))
+			self.pictures[6].append(tile.convert_alpha())
+			self.pictures[7].append(tile.convert_alpha())
+
+			# Tile 7
+			tile1.fill((0, 0, 0, 0))
+			tile2.fill((0, 0, 0, 0))
+			tile.fill((0, 0, 0, 0))
+			tile1.blit(tiles_pictures, (-pos[0]-cts.TILE_SIZE, -pos[1]))
+			tile2.blit(tiles_pictures, (-pos[0]-cts.TILE_SIZE/2, -pos[1]))
+			tile.blit(tile1, (0, 0))
+			tile.blit(tile2, (cts.TILE_SIZE/2, 0))
+			self.pictures[9].append(tile.convert_alpha())
+			self.pictures[10].append(tile.convert_alpha())
+			self.pictures[11].append(tile.convert_alpha())
+			self.pictures[12].append(tile.convert_alpha())
+
+			# Tile 0
+			tile1.fill((0, 0, 0, 0))
+			tile2.fill((0, 0, 0, 0))
+			tile.fill((0, 0, 0, 0))
+			tile1.blit(tiles_pictures, (-pos[0], -pos[1]-cts.TILE_SIZE/2))
+			tile2.blit(tiles_pictures, (-pos[0]-3*cts.TILE_SIZE/2, -pos[1]-cts.TILE_SIZE/2))
+			tile.blit(tile1, (0, 0))
+			tile.blit(tile2, (cts.TILE_SIZE/2, 0))
+			self.pictures[14].append(tile.convert_alpha())
+
+			# Tile 1
+			tile1.fill((0, 0, 0, 0))
+			tile2.fill((0, 0, 0, 0))
+			tile.fill((0, 0, 0, 0))
+			tile1.blit(tiles_pictures, (-pos[0], -pos[1]-cts.TILE_SIZE/2))
+			tile2.blit(tiles_pictures, (-pos[0]-cts.TILE_SIZE/2, -pos[1]-cts.TILE_SIZE/2))
+			tile.blit(tile1, (0, 0))
+			tile.blit(tile2, (cts.TILE_SIZE/2, 0))
+			self.pictures[16].append(tile.convert_alpha())
+			self.pictures[17].append(tile.convert_alpha())
+			self.pictures[27].append(tile.convert_alpha())
+			self.pictures[28].append(tile.convert_alpha())
+
+			# Tile 2
+			tile1.fill((0, 0, 0, 0))
+			tile2.fill((0, 0, 0, 0))
+			tile.fill((0, 0, 0, 0))
+			tile1.blit(tiles_pictures, (-pos[0]-cts.TILE_SIZE, -pos[1]-cts.TILE_SIZE/2))
+			tile2.blit(tiles_pictures, (-pos[0]-3*cts.TILE_SIZE/2, -pos[1]-cts.TILE_SIZE/2))
+			tile.blit(tile1, (0, 0))
+			tile.blit(tile2, (cts.TILE_SIZE/2, 0))
+			self.pictures[19].append(tile.convert_alpha())
+			self.pictures[20].append(tile.convert_alpha())
+			self.pictures[36].append(tile.convert_alpha())
+			self.pictures[37].append(tile.convert_alpha())
+
+			# Tile 3
+			tile1.fill((0, 0, 0, 0))
+			tile2.fill((0, 0, 0, 0))
+			tile.fill((0, 0, 0, 0))
+			tile1.blit(tiles_pictures, (-pos[0]-cts.TILE_SIZE, -pos[1]-cts.TILE_SIZE/2))
+			tile2.blit(tiles_pictures, (-pos[0]-cts.TILE_SIZE/2, -pos[1]-cts.TILE_SIZE/2))
+			tile.blit(tile1, (0, 0))
+			tile.blit(tile2, (cts.TILE_SIZE/2, 0))
+			self.pictures[22].append(tile.convert_alpha())
+			self.pictures[23].append(tile.convert_alpha())
+			self.pictures[24].append(tile.convert_alpha())
+			self.pictures[25].append(tile.convert_alpha())
+			self.pictures[30].append(tile.convert_alpha())
+			self.pictures[31].append(tile.convert_alpha())
+			self.pictures[32].append(tile.convert_alpha())
+			self.pictures[33].append(tile.convert_alpha())
+			self.pictures[39].append(tile.convert_alpha())
+			self.pictures[40].append(tile.convert_alpha())
+			self.pictures[41].append(tile.convert_alpha())
+			self.pictures[42].append(tile.convert_alpha())
+			self.pictures[44].append(tile.convert_alpha())
+			self.pictures[45].append(tile.convert_alpha())
+			self.pictures[46].append(tile.convert_alpha())
+			self.pictures[47].append(tile.convert_alpha())
 
 		else:
 			tile_picture = pygame.Surface((cts.TILE_SIZE, cts.TILE_SIZE), HWSURFACE | SRCALPHA)
@@ -1330,13 +1487,54 @@ class Tileset:
 				self.tiles["A2"].append(tile)
 
 	def load_A3(self):
-		pass
+		for y in range(4):
+			for x in range(8):
+				tile = Tile()
+				tile.load_picture(TILESETS[self.tileset_id]["A3"], (x*2*cts.TILE_SIZE, y*2*cts.TILE_SIZE), type="wall")
+				tile.set_hitbox(1)
+				self.tiles["A3"].append(tile)
 
 	def load_A4(self):
-		pass
+		for x in range(8):
+			tile = Tile()
+			tile.load_picture(TILESETS[self.tileset_id]["A4"], (x*2*cts.TILE_SIZE, 0))
+			tile.set_hitbox(1)
+			self.tiles["A4"].append(tile)
+		for x in range(8):
+			tile = Tile()
+			tile.load_picture(TILESETS[self.tileset_id]["A4"], (x*2*cts.TILE_SIZE, 3*cts.TILE_SIZE), type="wall")
+			tile.set_hitbox(1)
+			self.tiles["A4"].append(tile)
+		for x in range(8):
+			tile = Tile()
+			tile.load_picture(TILESETS[self.tileset_id]["A4"], (x*2*cts.TILE_SIZE, 5*cts.TILE_SIZE))
+			tile.set_hitbox(1)
+			self.tiles["A4"].append(tile)
+		for x in range(8):
+			tile = Tile()
+			tile.load_picture(TILESETS[self.tileset_id]["A4"], (x*2*cts.TILE_SIZE, 8*cts.TILE_SIZE), type="wall")
+			tile.set_hitbox(1)
+			self.tiles["A4"].append(tile)
+		for x in range(8):
+			tile = Tile()
+			tile.load_picture(TILESETS[self.tileset_id]["A4"], (x*2*cts.TILE_SIZE, 10*cts.TILE_SIZE))
+			tile.set_hitbox(1)
+			self.tiles["A4"].append(tile)
+		for x in range(8):
+			tile = Tile()
+			tile.load_picture(TILESETS[self.tileset_id]["A4"], (x*2*cts.TILE_SIZE, 13*cts.TILE_SIZE), type="wall")
+			tile.set_hitbox(1)
+			self.tiles["A4"].append(tile)
 
 	def load_A5(self):
-		pass
+		tileset_picture = pygame.image.load("GameAssets\\Tilesets\\pictures\\{}.png".format(TILESETS[self.tileset_id]["A5"])).convert_alpha()
+		nb_tile_x = tileset_picture.get_width()//48
+		nb_tile_y = tileset_picture.get_height()//48
+		for y in range(nb_tile_y):
+			for x in range(nb_tile_x):
+				tile = Tile()
+				tile.load_picture(TILESETS[self.tileset_id]["A5"], (x*cts.TILE_SIZE, y*cts.TILE_SIZE), type="unique")
+				self.tiles["A5"].append(tile)
 
 	def load_B(self):
 		tileset_picture = pygame.image.load("GameAssets\\Tilesets\\pictures\\{}.png".format(TILESETS[self.tileset_id]["B"])).convert_alpha()
