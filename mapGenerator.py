@@ -31,12 +31,14 @@ def run_thread():
 		display.blit(text, text_rect)
 		pygame.display.flip()
 
-thread = threading.Thread(target=run_thread)
-thread.start()
-
 #§ Importation des modules complémentaires nécéssaires
 import GameEngine as GE
 from GameEngine.constants import *
+
+thread = threading.Thread(target=run_thread)
+thread.start()
+
+GE.mapsystem.init()
 
 THREAD_RUN = False
 thread.join()

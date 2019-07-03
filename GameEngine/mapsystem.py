@@ -1572,7 +1572,7 @@ class Tileset:
 		picture, pos = index
 		return self.tiles[picture][pos]
 
-TILESETS_OBJECTS = [Tileset(i) for i in range(len(TILESETS))]
+TILESETS_OBJECTS = []
 
 class Map:
 	"""
@@ -1635,10 +1635,19 @@ class Map:
 		workers = []
 		for x in range(3):
 			worker = threading.Thread(target=self.render, args=(x, fps, camera_pos))
+			worker.setDaemon(False)
+			worker.setName("Layout {} update".format(x))
 			workers.append(worker)
 			worker.start()
 
 		for worker in workers:
 			worker.join()
+		del workers
 
 		self.current_frame += 1
+
+
+#§ Création des fonctions du module
+def init():
+	for i in range(len(TILESETS)):
+		TILESETS_OBJECTS.append(Tileset(i))
