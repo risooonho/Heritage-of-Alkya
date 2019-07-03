@@ -9,7 +9,6 @@ from pygame.locals import HWSURFACE, SRCALPHA
 from . import constants as cts
 import threading
 import pygame
-import time
 
 #§ Création des variables globales du module
 TILESETS = [
@@ -1598,8 +1597,13 @@ class Map:
 			tile = self.tileset[tile_id]
 			self.tile_map[tile.hitbox][tile_x][tile_y].append(tile_id)
 
-	def load_from_file(self, filename):
-		pass
+	def get_hitbox_map(self):
+		hitbox_map = [[0 for _ in range(self.size[1])] for _ in range(self.size[0])]
+		for x in range(self.size[0]):
+			for y in range(self.size[1]):
+				if self.tile_map[1][x][y] != [("B", 0)]:
+					hitbox_map[x][y] = 1
+		return hitbox_map
 
 	def render(self, level, fps, camera_pos):
 		self.layouts[level].fill((0, 0, 0, 0))
