@@ -1,37 +1,67 @@
-## Welcome to GitHub Pages
+## Heritage of Alkya
+This project is a FF-like RPG game created with python (pygame). As other games of the same type this game gives you a quest. In a medieval-fantastic world in danger because of darkness forces your quest is to exterminate these forces to bring back peace and freedom in the world. -
 
-You can use the [editor on GitHub](https://github.com/Lightpearl26/Heritage-of-Alkya/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+## Build status
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+![Build status](https://img.shields.io/badge/build-not%20created-red.svg?style=popout-square)
 
-### Markdown
+## Code style
+[![Code style](https://img.shields.io/badge/code%20style-python%20pep8-brightgreen.svg?style=popout-square)](https://www.python.org/dev/peps/pep-0008/)
+ 
+## Screenshots
+![screen mapgenerator](https://github.com/Lightpearl26/Heritage-of-Alkya/blob/master/screen_mapgenerator.png)
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+## Tech/framework used
+using SDL with pygame module. -
 
-```markdown
-Syntax highlighted code block
+## Code Example
+```python
+class TitleScreen(BaseScene):
+	"""
+	"""
+	def __init__(self):
+		BaseScene.__init__(self)
+		self.options = widget.ChoiceBox(["New Game", "Continue", "Options", "Quit Game"], (cts.WINDOW_SIZE_X//4, 2*cts.WINDOW_SIZE_Y//6, cts.WINDOW_SIZE_X//2, cts.WINDOW_SIZE_Y//2))
+	
+	def action(self):
+		self.running = False
+		option = self.options.get()
+		if option == "Quit Game":
+			pygame.quit()
+			exit()
 
-# Header 1
-## Header 2
-### Header 3
+		elif option == "New Game":
+			pass
 
-- Bulleted
-- List
+		elif option == "Continue":
+			pass
 
-1. Numbered
-2. List
+		else:
+			pass
 
-**Bold** and _Italic_ and `Code` text
+	def up(self):
+		self.options.up()
+	
+	def down(self):
+		self.options.down()
 
-[Link](url) and ![Image](src)
+	def render(self):
+		BaseScene.render(self)
+		font = pygame.font.SysFont("Arial", 32, bold=True, italic=True)
+		title = font.render(cts.GAME_TITLE, True, (255, 255, 255))
+		title_rect = title.get_rect(center=(cts.WINDOW_SIZE_X//2, cts.WINDOW_SIZE_Y//6))
+		self.surface.blit(title, title_rect)
+		self.options.blit(self.surface)
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+## Installation
+No installation created now but you can help by contributing on the project. -
 
-### Jekyll Themes
+## Contribute
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/Lightpearl26/Heritage-of-Alkya/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+[How to contribute](https://github.com/Lightpearl26/Heritage-of-Alkya/blob/master/CONTRIBUTING.md). -
 
-### Support or Contact
+## License
+[![License type](https://img.shields.io/badge/license-GNU%20GPL-brightgreen.svg?style=popout-square)](https://github.com/Lightpearl26/Heritage-of-Alkya/blob/master/LICENSE)
 
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+GNU GPL © [Lightpearl26](https://github.com/Lightpearl26)
