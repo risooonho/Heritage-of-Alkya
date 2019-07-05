@@ -129,7 +129,7 @@ class Logger:
                     self.to_write.put("<WARNING> " + format_text)
                 else:
                     if self.cons_enabled:
-                        self.to_log.put(format_text)
+                        self.to_log.put((format_text,)) ##It is a TUPLE !
                     self.to_write.put(format_text)
             except(Exception) as error:
                 print("Logger failed to log the message.")

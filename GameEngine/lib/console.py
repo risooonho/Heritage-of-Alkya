@@ -51,7 +51,7 @@ class Console(Thread, Tk):
                 elif msg.split(":")[-1:][0] == "text":
                     fg = msg.split(":")[-3:-2][0]
                     bg = msg.split(":")[-2:-1][0]
-                    string = "".join(msg.split(":")[:-3])
+                    string = ":".join(msg.split(":")[:-3])
                     
                     start = self.text.index("end")
                     self.text.config(state=NORMAL)
