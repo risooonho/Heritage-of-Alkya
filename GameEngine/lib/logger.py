@@ -155,6 +155,7 @@ class Logger:
                 pass
 
             self.running = False
+            self.closeConsole()
             self.closeFile()
             
         except(Exception):
