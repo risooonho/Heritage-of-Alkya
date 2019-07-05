@@ -32,9 +32,10 @@ class Console(Thread, Tk):
 
     def window(self):
         self.main = Tk()
+        self.main.title("Console - Heritage of Alkya")
 
         self.text = Text(self.main, bg="black", fg="white", insertbackground="white", state=DISABLED)
-        self.text.grid(row=0, column=0)
+        self.text.pack(side=LEFT, fill=BOTH, expand=YES)
 
         self.main.after(100, self.update)
             
