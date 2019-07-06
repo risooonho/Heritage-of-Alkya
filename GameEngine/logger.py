@@ -1,8 +1,96 @@
+#-*-coding: utf-8-*-
+
+#§ Variables d'information du module
+__version__ = "1.0.0"
+__authors__ = "Marklinmax"
+
+#§ Importation des modules complémentaires nécéssaires
+import sys
+import time
 import os
 import datetime
-from lib import console
+from tkinter import *
 from threading import Thread
 from multiprocessing import Queue
+
+#§ Création des variables gloables du module
+DEFAULT_FG = "white"
+DEFAULT_BG = "black"
+
+#§ Création des objets du module
+class Console(Thread, Tk):
+    
+    def __init__(self):
+        self.running = True
+        
+        self.to_disp = Queue()
+        self.to_execute = Queue()
+
+        self.line_count = 0
+
+        self.main = None
+        self.text = None
+
+        self.q = Queue()
+
+        self.t = Thread(target=self.window, daemon=True)
+        self.t.start()
+
+        ##time.sleep(1)
+        ##self.main.quit()
+        
+
+    def window(self):
+        self.main = Tk()
+        self.main.title("Console - Heritage of Alkya")
+
+        self.text = Text(self.main, bg="black", fg="white", insertbackground="white", state=DISABLED)
+        self.text.pack(side=LEFT, fill=BOTH, expand=YES)
+
+        self.main.after(100, self.update)
+            
+        self.main.mainloop()
+        
+
+    def update(self, event=None):
+        while self.running:
+            while not self.q.empty():
+                msg = self.q.get()
+                if msg == "0":
+                    self.main.destroy()
+                    self.running = False
+                elif msg[-1] == "text":
+                    fg = msg[-3]
+                    bg = msg[-2]
+                    string = msg[-4]
+                    
+                    start = self.text.index("end")
+                    self.text.config(state=NORMAL)
+                    if self.line_count != 0:
+                        self.text.insert("end", "\n" + string)
+                        self.line_count += 1
+                    else:
+                        self.text.insert("end", string)
+                        self.line_count += 1
+
+                    end = self.text.index("insert lineend")
+                    
+                    self.text.tag_add(string, start, end)
+                    self.text.tag_config(string, background=bg, foreground=fg)
+
+                    self.text.config(state=DISABLED)
+                    self.text.update()
+            try:
+                self.main.update()
+            except(Exception):
+                self.running = False
+                    
+
+    def cprint(self, text, fg=DEFAULT_FG, bg=DEFAULT_BG):
+        self.q.put((text, fg, bg, "text"))
+
+    def stop(self):
+        self.q.put("0")
 
 class Logger:
 
@@ -10,7 +98,7 @@ class Logger:
 
 
         if con == None and cons_enabled == True:
-            self.cons = console.Console()
+            self.cons = Console()
         else:
             self.cons = console
 
@@ -50,10 +138,7 @@ class Logger:
         while self.cons_enabled:
             while not q.empty():
                 msg = q.get()
-                if len(msg) == 2:
-                    self.cons.cprint(msg[0], msg[1])
-                else:
-                    self.cons.cprint(msg[0])
+                self.cons.cprint(*msg)
         self.cons.stop()
         
     def openFile(self):
@@ -92,7 +177,7 @@ class Logger:
     def openConsole(self, console=None):
         if self.cons == None and self.cons_enabled == False:
             if console == None:
-                self.cons = console.Console()
+                self.cons = Console()
             else:
                 self.cons = console
             self.garbageCollect()
@@ -109,24 +194,24 @@ class Logger:
             
             
 
-    def log(self, text, msgtype="default"):
+    def log(self, text, thread_name="MAIN-THREAD", msgtype="default"):
         if not self.running:
             print("The logger is stopped and can't log anymore.")
         else:
             try:
-                format_text = "[{}] {}".format(self.getDate(), text)
+                format_text = "[{}][{}][{}]: {}".format(self.getDate(), thread_name, msgtype.capitalize(), text)
                 if msgtype == "error":
                     if self.cons_enabled:
-                        self.to_log.put(("<ERROR> " + format_text, "red"))
-                    self.to_write.put("<ERROR> " + format_text)
+                        self.to_log.put((format_text, "red"))
+                    self.to_write.put(format_text)
                 elif msgtype == "info":
                     if self.cons_enabled:
-                        self.to_log.put(("<INFO> " + format_text, "cyan"))
-                    self.to_write.put("<INFO> " + format_text)
+                        self.to_log.put((format_text, "cyan"))
+                    self.to_write.put(format_text)
                 elif msgtype == "warning":
                     if self.cons_enabled:
-                        self.to_log.put(("<WARNING> " + format_text, "yellow"))
-                    self.to_write.put("<WARNING> " + format_text)
+                        self.to_log.put((format_text, "yellow"))
+                    self.to_write.put(format_text)
                 else:
                     if self.cons_enabled:
                         self.to_log.put((format_text,)) ##It is a TUPLE !
