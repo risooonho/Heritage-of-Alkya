@@ -6,6 +6,7 @@ __authors__ = "Lightpearl"
 
 #§ Importation des modules complémentaires nécéssaires
 from pygame.locals import *
+from . import optionssystem
 
 #§ Variables de taille
 TILE_SIZE = 48 #px
@@ -27,19 +28,8 @@ SPEED_GOD = 1/30 #s
 MIN_FPS = 1/SPEED_GOD
 MAX_FPS = 120
 
-#§ variables de nom
+#§ Variables de nom
 GAME_TITLE = "Heritage of Alkya"
 
-#§ Variables d'évennements
-KEYMAP = {
-    K_UP: "up",
-    K_DOWN: "down",
-    K_LEFT: "left",
-    K_RIGHT: "right",
-    K_a: "action",
-    K_x: "action",
-    K_q: "action",
-    K_z: "cancel",
-    K_w: "cancel",
-    K_c: "cancel",
-    K_LSHIFT: "special 1"}
+#§ Variables d'options
+options = optionssystem.Options()
