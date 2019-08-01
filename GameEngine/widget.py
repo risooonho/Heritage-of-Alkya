@@ -25,22 +25,28 @@ class BaseWidget:
 		self.rect = rect
 		self.is_highlighted = False
 
-	def action(self):
+	def action(self, mod=1):
 		pass
 
-	def cancel(self):
+	def cancel(self, mod=1):
 		pass
 
-	def up(self):
+	def up(self, mod=1):
 		pass
 
-	def down(self):
+	def down(self, mod=1):
 		pass
 
-	def left(self):
+	def left(self, mod=1):
 		pass
 
-	def right(self):
+	def right(self, mod=1):
+		pass
+
+	def special_1(self, mod=1):
+		pass
+
+	def special_2(self, mod=1):
 		pass
 
 	def render(self):
@@ -199,3 +205,35 @@ class Scale(BaseWidget):
 			pygame.draw.rect(self.surface, self.unhighlight_color, (0, self.rect[3]//4, progress, self.rect[3]//2))
 			pygame.draw.polygon(self.surface, self.unhighlight_color, (progress, self.rect[3]//4, progress-self.rect[3]//8, 0, progress+self.rect[3]//8, 0))
 			pygame.draw.polygon(self.surface, self.unhighlight_color, (progress, 3*self.rect[3]//4, progress-self.rect[3]//8, self.rect[3], progress+self.rect[3]//8, self.rect[3]))
+
+class SwitchButton(BaseWidget):
+	"""
+	"""
+	def __init__(self, rect, init_value=False):
+		BaseWidget.__init__(self, rect)
+		self.value = init_value
+		self.bg_color = (0, 0, 0, 0)
+		self.fg_color = (255, 255, 255)
+		self.highlight_color = (100, 200, 0)
+		self.unhighlight_color = (50, 50, 50)
+
+	def left(self, mod):
+		if mod:
+			self.value = not self.value
+
+	def right(self, mod):
+		if mod:
+			self.value = not self.value
+
+	def action(self, mod):
+		if mod:
+			self.value = not self.value
+
+	def render(self):
+		BaseWidget.render(self)
+		self.surface.fill(self.fg_color)
+		pygame.draw.rect(self.surface, self.unhighlight_color, (1, 1, self.rect[2]-2, self.rect[3]-2), 1)
+		if self.value:
+			pygame.draw.rect(self.surface, self.unhighlight_color, (self.rect[2]//2, 4, self.rect[2]//2-4, self.rect[3]-4))
+		else:
+			pygame.draw.rect(self.surface, self.highlight_color, (4, 4, self.rect[2]//2-4, self.rect[3]-4))
