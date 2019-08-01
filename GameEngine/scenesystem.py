@@ -25,26 +25,33 @@ class BaseScene:
 			"down": self.down,
 			"left": self.left,
 			"right": self.right,
-			"special": lambda: None
+			"special 1": self.special_1,
+			"special 2": self.special_2
 		}
 		self.running = False
 
-	def action(self):
+	def action(self, mod):
 		pass
 
-	def cancel(self):
+	def cancel(self, mod):
 		pass
 
-	def up(self):
+	def up(self, mod):
 		pass
 
-	def down(self):
+	def down(self, mod):
 		pass
 
-	def left(self):
+	def left(self, mod):
 		pass
 
-	def right(self):
+	def right(self, mod):
+		pass
+
+	def special_1(self, mod):
+		pass
+	
+	def special_2(self, mod):
 		pass
 
 	def render(self):
@@ -60,8 +67,14 @@ class BaseScene:
 					exit()
 
 				elif event.type == cts.KEYDOWN:
-					if event.key in cts.KEYMAP:
-						self.event_dict[cts.KEYMAP[event.key]]()
+					if event.key in cts.options.KEYMAP:
+						func = self.event_dict[cts.options.KEYMAP[event.key]]
+						func(1)
+
+				elif event.type == cts.KEYUP:
+					if event.key in cts.options.KEYMAP:
+						func = self.event_dict[cts.options.KEYMAP[event.key]]
+						func(0)
 				
 				else:
 					pass
@@ -94,11 +107,13 @@ class TitleScreen(BaseScene):
 		else:
 			pass
 
-	def up(self):
-		self.options.up()
+	def up(self, mod):
+		if mod:
+			self.options.up()
 	
-	def down(self):
-		self.options.down()
+	def down(self, mod):
+		if mod:
+			self.options.down()
 
 	def render(self):
 		BaseScene.render(self)
@@ -107,3 +122,9 @@ class TitleScreen(BaseScene):
 		title_rect = title.get_rect(center=(cts.WINDOW_SIZE_X//2, cts.WINDOW_SIZE_Y//6))
 		self.surface.blit(title, title_rect)
 		self.options.blit(self.surface)
+
+class OptionScene(BaseScene):
+	"""
+	"""
+	def __init__(self):
+		BaseScene.__init__(self)
