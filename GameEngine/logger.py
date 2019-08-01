@@ -100,7 +100,7 @@ class Logger:
 		if con == None and cons_enabled == True:
 			self.cons = Console()
 		else:
-			self.cons = console
+			self.cons = con
 
 		self.cons_enabled = cons_enabled
 
