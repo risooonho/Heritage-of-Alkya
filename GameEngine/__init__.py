@@ -1,4 +1,4 @@
-from . import options
+from . import optionssystem
 from . import constants
 from . import widget
 from . import scenesystem
