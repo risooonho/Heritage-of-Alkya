@@ -142,11 +142,11 @@ class OptionScene(BaseScene):
 			widget.Scale((cts.WINDOW_SIZE_X-420, 116, 300, 30), init_value=100, end_value=100),
 			widget.Scale((cts.WINDOW_SIZE_X-420, 166, 300, 30), init_value=100, end_value=100),
 			widget.Scale((cts.WINDOW_SIZE_X-420, 216, 300, 30), init_value=100, end_value=100),
-			widget.Scale((cts.WINDOW_SIZE_X-420, 266, 300, 30), init_value=100, end_value=100),
 			widget.SwitchButton((cts.WINDOW_SIZE_X-170, 346, 50, 30)),
 			widget.SwitchButton((cts.WINDOW_SIZE_X-170, 396, 50, 30)),
 			widget.Scale((cts.WINDOW_SIZE_X-420, 446, 300, 30), init_value=12, start_value=0, end_value=24)
 		)
+		self.labels = ["Music volume", "Ambiance volume", "Effects Volume", "Hardcore mode", "Day / Night cycle", "Game Hour (if no Day / Night cycle)"]
 
 	def up(self, mod):
 		self.page.up(mod)
@@ -164,7 +164,9 @@ class OptionScene(BaseScene):
 		self.page.action(mod)
 
 	def cancel(self, mod):
-		self.page.cancel(mod)
+		info = self.page.cancel(mod)
+		if info:
+			self.running = False
 
 	def special_1(self, mod):
 		self.page.special_1(mod)
@@ -180,3 +182,20 @@ class OptionScene(BaseScene):
 		text = font.render("Options", True, (255, 255, 255))
 		text_rect = text.get_rect(center=(cts.WINDOW_SIZE_X//2, 48))
 		self.surface.blit(text, text_rect)
+
+		font = pygame.font.SysFont("Arial", 16, bold=True)
+		for i in range(len(self.labels)):
+			if isinstance(self.page.widgets[i], widget.Scale):
+				text_2 = font.render(str(self.page.widgets[i].value), True, (255, 255, 255))
+				text_2_rect = text_2.get_rect(midleft=(cts.WINDOW_SIZE_X-100, self.page.widgets[i].rect[1]+15))
+				self.surface.blit(text_2, text_2_rect)
+			if i == self.page.cursor_pos:
+				if self.page.selected_widget:
+					text = font.render(self.labels[i], True, (200, 100, 0))
+				else:
+					text = font.render(self.labels[i], True, (100, 200, 0))
+			else:
+				text = font.render(self.labels[i], True, (255, 255, 255))
+
+			text_rect = text.get_rect(midleft=(48, self.page.widgets[i].rect[1]+15))
+			self.surface.blit(text, text_rect)

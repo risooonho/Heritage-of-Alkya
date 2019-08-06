@@ -268,7 +268,10 @@ class Page(BaseWidget):
 
 	def cancel(self, mod):
 		if mod:
-			self.selected_widget = None
+			if self.selected_widget:
+				self.selected_widget = None
+			else:
+				return True
 
 	def special_1(self, mod):
 		if self.selected_widget:
