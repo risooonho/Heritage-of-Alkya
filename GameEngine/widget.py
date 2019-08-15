@@ -205,9 +205,9 @@ class SwitchButton(BaseWidget):
 		self.surface.fill(self.fg_color)
 		pygame.draw.rect(self.surface, self.unhighlight_color, (1, 1, self.rect[2]-2, self.rect[3]-2), 1)
 		if self.value:
-			pygame.draw.rect(self.surface, self.unhighlight_color, (self.rect[2]//2, 4, self.rect[2]//2-4, self.rect[3]-8))
+			pygame.draw.rect(self.surface, self.highlight_color, (self.rect[2]//2, 4, self.rect[2]//2-4, self.rect[3]-8))
 		else:
-			pygame.draw.rect(self.surface, self.highlight_color, (4, 4, self.rect[2]//2-4, self.rect[3]-8))
+			pygame.draw.rect(self.surface, self.unhighlight_color, (4, 4, self.rect[2]//2-4, self.rect[3]-8))
 
 class Page(BaseWidget):
 	"""
@@ -339,3 +339,10 @@ class PageSwitcher(BaseWidget):
 		self.pages[self.cursor_pos].render()
 		self.surface.blit(self.pages[self.cursor_pos], (0, 0))
 		pygame.draw.rect(self.surface, self.bg_color, (0, self.rect[3]-48, self.rect[2], 48))
+
+class SaveBox(BaseWidget):
+	"""
+	"""
+	def __init__(self, rect, save_id):
+		BaseWidget.__init__(self, rect)
+		self.save_id = save_id

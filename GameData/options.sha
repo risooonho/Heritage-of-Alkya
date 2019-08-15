@@ -1,0 +1,11 @@
+OPTIONS of game [Heritage of Alkya]
+
+<VOLUMES>
+BGM: 50
+BGS: 25
+MSE: 75
+
+<SYSTEM>
+Hardcore: False
+DNcycle: True
+GameHour: 12

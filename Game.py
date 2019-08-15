@@ -14,5 +14,4 @@ pygame.init()
 
 display = pygame.display.set_mode(cts.WINDOW_SIZE, cts.HWSURFACE | cts.DOUBLEBUF)
 
-os = GE.scenesystem.OptionScene()
-os.loop(display)
+GE.scenesystem.SCENES["TitleScreen"].loop(display)

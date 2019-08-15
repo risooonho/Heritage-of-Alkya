@@ -9,9 +9,6 @@ from . import constants as cts
 from . import widget
 import pygame
 
-#§ Variables globales du module
-SCENES = {}
-
 #§ Création des objets du module
 class BaseScene:
 	"""
@@ -62,6 +59,7 @@ class BaseScene:
 
 	def loop(self, display):
 		self.running = True
+		self.display = display
 
 		clock = pygame.time.Clock()
 
@@ -100,21 +98,21 @@ class TitleScreen(BaseScene):
 		BaseScene.__init__(self)
 		self.options = widget.ChoiceBox(["New Game", "Continue", "Options", "Quit Game"], (cts.WINDOW_SIZE_X//4, 2*cts.WINDOW_SIZE_Y//6, cts.WINDOW_SIZE_X//2, cts.WINDOW_SIZE_Y//2))
 	
-	def action(self):
-		self.running = False
+	def action(self, mod):
 		option = self.options.get()
 		if option == "Quit Game":
+			self.running = False
 			pygame.quit()
 			exit()
 
 		elif option == "New Game":
-			pass
+			self.running = False
 
 		elif option == "Continue":
-			pass
+			self.running = False
 
 		else:
-			pass
+			SCENES["Options"].loop(self.display)
 
 	def up(self, mod):
 		if mod:
@@ -147,6 +145,7 @@ class OptionScene(BaseScene):
 			widget.Scale((cts.WINDOW_SIZE_X-420, 446, 300, 30), init_value=12, start_value=0, end_value=24)
 		)
 		self.labels = ["Music volume", "Ambiance volume", "Effects Volume", "Hardcore mode", "Day / Night cycle", "Game Hour (if no Day / Night cycle)"]
+		self.load()
 
 	def up(self, mod):
 		self.page.up(mod)
@@ -166,6 +165,8 @@ class OptionScene(BaseScene):
 	def cancel(self, mod):
 		info = self.page.cancel(mod)
 		if info:
+			self.save()
+			cts.options.load()
 			self.running = False
 
 	def special_1(self, mod):
@@ -199,3 +200,55 @@ class OptionScene(BaseScene):
 
 			text_rect = text.get_rect(midleft=(48, self.page.widgets[i].rect[1]+15))
 			self.surface.blit(text, text_rect)
+
+	def save(self):
+		with open(cts.OPTION_PATH, "w") as file:
+			file.write("OPTIONS of game [Heritage of Alkya]\n\n")
+			file.write("<VOLUMES>\n")
+			file.write("BGM: {}\n".format(self.page.widgets[0].value))
+			file.write("BGS: {}\n".format(self.page.widgets[1].value))
+			file.write("MSE: {}\n\n".format(self.page.widgets[2].value))
+			file.write("<SYSTEM>\n")
+			file.write("Hardcore: {}\n".format(self.page.widgets[3].value))
+			file.write("DNcycle: {}\n".format(self.page.widgets[4].value))
+			file.write("GameHour: {}\n".format(self.page.widgets[5].value))
+			file.close()
+
+	def load(self):
+		with open(cts.OPTION_PATH, "r") as file:
+			for line in file:
+				if ": " in line:
+					label, content = line[:-1].split(": ")
+					if label == "BGM":
+						self.page.widgets[0].value = int(content)
+					elif label == "BGS":
+						self.page.widgets[1].value = int(content)
+					elif label == "MSE":
+						self.page.widgets[2].value = int(content)
+					elif label == "Hardcore":
+						self.page.widgets[3].value = eval(content)
+					elif label == "DNcycle":
+						self.page.widgets[4].value = eval(content)
+					elif label == "GameHour":
+						self.page.widgets[5].value = int(content)
+			file.close()
+
+class SaveChooserScene(BaseScene):
+	"""
+	"""
+	def __init__(self):
+		BaseScene.__init__(self)
+		self.page = widget.Page((0, 0, cts.WINDOW_SIZE_X, cts.WINDOW_SIZE_Y))
+		self.page.add_widgets(
+			widget.SaveBox((0, 0, cts.WINDOW_SIZE_X, cts.WINDOW_SIZE_Y//4), 1),
+			widget.SaveBox((0, cts.WINDOW_SIZE_Y//4, cts.WINDOW_SIZE_X, cts.WINDOW_SIZE_Y//4), 1),
+			widget.SaveBox((0, cts.WINDOW_SIZE_Y//2, cts.WINDOW_SIZE_X, cts.WINDOW_SIZE_Y//4), 1),
+			widget.SaveBox((0, 3*cts.WINDOW_SIZE_Y//4, cts.WINDOW_SIZE_X, cts.WINDOW_SIZE_Y//4), 1)
+		)
+
+#§ Variables globales du module
+SCENES = {
+	"TitleScreen": TitleScreen(),
+	"Options": OptionScene(),
+	"SaveChooser": SaveChooserScene()
+}
