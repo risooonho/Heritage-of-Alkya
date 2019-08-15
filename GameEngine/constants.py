@@ -7,6 +7,7 @@ __authors__ = "Lightpearl"
 #§ Importation des modules complémentaires nécéssaires
 from pygame.locals import *
 from . import optionssystem
+from . import savesystem
 
 #§ Variables de taille
 TILE_SIZE = 48 #px
@@ -33,3 +34,7 @@ GAME_TITLE = "Heritage of Alkya"
 
 #§ Variables d'options
 options = optionssystem.Options()
+save = savesystem.Save()
+
+#§ Variables de chemins
+OPTION_PATH = optionssystem.OPTION_PATH

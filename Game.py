@@ -8,3 +8,10 @@ __authors__ = "Lightpearl"
 #§ Importation des modules nécéssaires
 import GameEngine as GE
 import GameEngine.constants as cts
+import pygame
+
+pygame.init()
+
+display = pygame.display.set_mode(cts.WINDOW_SIZE, cts.HWSURFACE | cts.DOUBLEBUF)
+
+GE.scenesystem.SCENES["TitleScreen"].loop(display)

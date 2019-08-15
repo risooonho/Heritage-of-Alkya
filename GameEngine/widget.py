@@ -125,9 +125,8 @@ class ChoiceBox(BaseWidget):
 class Scale(BaseWidget):
 	"""
 	"""
-	def __init__(self, rect, align="h", init_value=0, start_value=0, end_value=0):
+	def __init__(self, rect, init_value=0, start_value=0, end_value=0):
 		BaseWidget.__init__(self, rect)
-		self.align = align
 		self.value = init_value
 		self.start_value = start_value
 		self.end_value = end_value
@@ -139,41 +138,17 @@ class Scale(BaseWidget):
 		self.remove_value = False
 		self.speed = 1
 
-	def up(self, mod):
-		if self.align == "v":
-			if mod:
-				self.remove_value = True
-			else:
-				self.remove_value = False
-		else:
-			pass
-
-	def down(self, mod):
-		if self.align == "v":
-			if mod:
-				self.add_value = True
-			else:
-				self.add_value = False
-		else:
-			pass
-
 	def left(self, mod):
-		if self.align == "h":
-			if mod:
-				self.remove_value = True
-			else:
-				self.remove_value = False
+		if mod:
+			self.remove_value = True
 		else:
-			pass
+			self.remove_value = False
 
 	def right(self, mod):
-		if self.align == "h":
-			if mod:
-				self.add_value = True
-			else:
-				self.add_value = False
+		if mod:
+			self.add_value = True
 		else:
-			pass
+			self.add_value = False
 
 	def special_1(self, mod):
 		if mod:
@@ -192,19 +167,15 @@ class Scale(BaseWidget):
 		if self.add_value:
 			self.value = min(self.end_value, self.value + self.speed)
 		if self.remove_value:
-			self.value = max(self.start_value, self.value-self.speed)
+			self.value = max(self.start_value, self.value - self.speed)
 		self.surface.fill(self.bg_color)
 		pygame.draw.rect(self.surface, self.fg_color, (0, self.rect[3]//4, self.rect[2], self.rect[3]//2))
 		if self.is_highlighted:
-			progress = ((self.value-self.start_value)//(self.end_value-self.start_value))*self.rect[2]
+			progress = ((self.value-self.start_value)/(self.end_value-self.start_value))*self.rect[2]
 			pygame.draw.rect(self.surface, self.highlight_color, (0, self.rect[3]//4, progress, self.rect[3]//2))
-			pygame.draw.polygon(self.surface, self.highlight_color, (progress, self.rect[3]//4, progress-self.rect[3]//8, 0, progress+self.rect[3]//8, 0))
-			pygame.draw.polygon(self.surface, self.highlight_color, (progress, 3*self.rect[3]//4, progress-self.rect[3]//8, self.rect[3], progress+self.rect[3]//8, self.rect[3]))
 		else:
-			progress = ((self.value-self.start_value)//(self.end_value-self.start_value))*self.rect[2]
+			progress = ((self.value-self.start_value)/(self.end_value-self.start_value))*self.rect[2]
 			pygame.draw.rect(self.surface, self.unhighlight_color, (0, self.rect[3]//4, progress, self.rect[3]//2))
-			pygame.draw.polygon(self.surface, self.unhighlight_color, (progress, self.rect[3]//4, progress-self.rect[3]//8, 0, progress+self.rect[3]//8, 0))
-			pygame.draw.polygon(self.surface, self.unhighlight_color, (progress, 3*self.rect[3]//4, progress-self.rect[3]//8, self.rect[3], progress+self.rect[3]//8, self.rect[3]))
 
 class SwitchButton(BaseWidget):
 	"""
@@ -234,6 +205,144 @@ class SwitchButton(BaseWidget):
 		self.surface.fill(self.fg_color)
 		pygame.draw.rect(self.surface, self.unhighlight_color, (1, 1, self.rect[2]-2, self.rect[3]-2), 1)
 		if self.value:
-			pygame.draw.rect(self.surface, self.unhighlight_color, (self.rect[2]//2, 4, self.rect[2]//2-4, self.rect[3]-4))
+			pygame.draw.rect(self.surface, self.highlight_color, (self.rect[2]//2, 4, self.rect[2]//2-4, self.rect[3]-8))
 		else:
-			pygame.draw.rect(self.surface, self.highlight_color, (4, 4, self.rect[2]//2-4, self.rect[3]-4))
+			pygame.draw.rect(self.surface, self.unhighlight_color, (4, 4, self.rect[2]//2-4, self.rect[3]-8))
+
+class Page(BaseWidget):
+	"""
+	"""
+	def __init__(self, rect, widgets=[]):
+		BaseWidget.__init__(self, rect)
+		self.widgets = widgets
+		self.selected_widget = None
+		self.cursor_pos = 0
+
+	def add_widgets(self, *args):
+		for widget in args:
+			self.widgets.append(widget)
+		self.widgets[0].set_highlighted()
+
+	def up(self, mod):
+		if self.selected_widget:
+			self.selected_widget.up(mod)
+		else:
+			if mod:
+				self.widgets[self.cursor_pos].set_unhighlighted()
+				self.cursor_pos = (self.cursor_pos-1)%len(self.widgets)
+				self.widgets[self.cursor_pos].set_highlighted()
+
+	def down(self, mod):
+		if self.selected_widget:
+			self.selected_widget.down(mod)
+		else:
+			if mod:
+				self.widgets[self.cursor_pos].set_unhighlighted()
+				self.cursor_pos = (self.cursor_pos+1)%len(self.widgets)
+				self.widgets[self.cursor_pos].set_highlighted()
+
+	def left(self, mod):
+		if self.selected_widget:
+			self.selected_widget.left(mod)
+		else:
+			if mod:
+				self.widgets[self.cursor_pos].set_unhighlighted()
+				self.cursor_pos = (self.cursor_pos-1)%len(self.widgets)
+				self.widgets[self.cursor_pos].set_highlighted()
+
+	def right(self, mod):
+		if self.selected_widget:
+			self.selected_widget.right(mod)
+		else:
+			if mod:
+				self.widgets[self.cursor_pos].set_unhighlighted()
+				self.cursor_pos = (self.cursor_pos+1)%len(self.widgets)
+				self.widgets[self.cursor_pos].set_highlighted()
+
+	def action(self, mod):
+		if self.selected_widget:
+			self.selected_widget.action(mod)
+		else:
+			if mod:
+				self.selected_widget = self.widgets[self.cursor_pos]
+
+	def cancel(self, mod):
+		if mod:
+			if self.selected_widget:
+				self.selected_widget = None
+			else:
+				return True
+
+	def special_1(self, mod):
+		if self.selected_widget:
+			self.selected_widget.special_1(mod)
+
+	def special_2(self, mod):
+		if self.selected_widget:
+			self.selected_widget.special_2(mod)
+
+	def render(self):
+		BaseWidget.render(self)
+		for widget in self.widgets:
+			pos = (widget.rect[0]-self.rect[0], widget.rect[1]-self.rect[1])
+			widget.render()
+			self.surface.blit(widget.surface, pos)
+
+class PageSwitcher(BaseWidget):
+	"""
+	"""
+	def __init__(self, rect):
+		BaseWidget.__init__(self, rect)
+		self.pages = []
+		self.pages_names = []
+		self.cursor_pos = 0
+		self.current_page = None
+		self.bg_color = (255, 255, 255)
+		self.fg_color = (50, 50, 50)
+		self.highlight_color = (100, 200, 0)
+
+	def add_pages(self, *args):
+		for page_infos in args:
+			page_name, page = page_infos
+			if page.rect[2] == self.rect[2] and page.rect[3]+48 == self.rect[3]:
+				self.pages.append(page)
+				self.pages_names.append(page_name)
+			else:
+				raise AttributError("Page has not same format as current PageSwitcher")
+
+	def up(self, mod):
+		pass
+
+	def down(self, mod):
+		pass
+
+	def left(self, mod):
+		pass
+
+	def right(self, mod):
+		pass
+
+	def action(self, mod):
+		pass
+
+	def cancel(self, mod):
+		pass
+
+	def special_1(self, mod):
+		pass
+
+	def special_2(self, mod):
+		pass
+
+	def render(self):
+		BaseWidget.render(self)
+		self.pages[self.cursor_pos].render()
+		self.surface.blit(self.pages[self.cursor_pos], (0, 0))
+		pygame.draw.rect(self.surface, self.bg_color, (0, self.rect[3]-48, self.rect[2], 48))
+
+class SaveBox(BaseWidget):
+	"""
+	"""
+	def __init__(self, rect, save_id):
+		BaseWidget.__init__(self, rect)
+		self.save_id = save_id
