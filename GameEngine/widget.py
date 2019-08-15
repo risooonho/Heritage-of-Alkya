@@ -212,9 +212,9 @@ class SwitchButton(BaseWidget):
 class Page(BaseWidget):
 	"""
 	"""
-	def __init__(self, rect, widgets=[]):
+	def __init__(self, rect):
 		BaseWidget.__init__(self, rect)
-		self.widgets = widgets
+		self.widgets = []
 		self.selected_widget = None
 		self.cursor_pos = 0
 
@@ -288,61 +288,51 @@ class Page(BaseWidget):
 			widget.render()
 			self.surface.blit(widget.surface, pos)
 
-class PageSwitcher(BaseWidget):
-	"""
-	"""
-	def __init__(self, rect):
-		BaseWidget.__init__(self, rect)
-		self.pages = []
-		self.pages_names = []
-		self.cursor_pos = 0
-		self.current_page = None
-		self.bg_color = (255, 255, 255)
-		self.fg_color = (50, 50, 50)
-		self.highlight_color = (100, 200, 0)
-
-	def add_pages(self, *args):
-		for page_infos in args:
-			page_name, page = page_infos
-			if page.rect[2] == self.rect[2] and page.rect[3]+48 == self.rect[3]:
-				self.pages.append(page)
-				self.pages_names.append(page_name)
-			else:
-				raise AttributError("Page has not same format as current PageSwitcher")
-
-	def up(self, mod):
-		pass
-
-	def down(self, mod):
-		pass
-
-	def left(self, mod):
-		pass
-
-	def right(self, mod):
-		pass
-
-	def action(self, mod):
-		pass
-
-	def cancel(self, mod):
-		pass
-
-	def special_1(self, mod):
-		pass
-
-	def special_2(self, mod):
-		pass
-
-	def render(self):
-		BaseWidget.render(self)
-		self.pages[self.cursor_pos].render()
-		self.surface.blit(self.pages[self.cursor_pos], (0, 0))
-		pygame.draw.rect(self.surface, self.bg_color, (0, self.rect[3]-48, self.rect[2], 48))
-
 class SaveBox(BaseWidget):
 	"""
 	"""
 	def __init__(self, rect, save_id):
 		BaseWidget.__init__(self, rect)
 		self.save_id = save_id
+		self.name = "Empty"
+		self.job = "None"
+		self.timePlayed = 0
+		self.load_infos()
+
+	def convert_seconds(self):
+		s, temp = self.timePlayed % 60, self.timePlayed // 60
+		m, temp = temp % 60, temp // 60
+		h, j = temp % 24, temp // 24
+		return "{}J{}H{}m{}s".format(j, h, m, s)
+
+	def load_infos(self):
+		with open("GameData\\save_{}.sha".format(self.save_id), "r") as file:
+			for line in file:
+				if ": " in line:
+					label, content = line[:-1].split(": ")
+					if label == "PlayerName":
+						self.name = content
+					elif label == "PlayerClass":
+						self.job = content
+					elif label == "TimePlayed":
+						self.timePlayed = int(content)
+					else:
+						pass
+			file.close()
+
+	def render(self):
+		BaseWidget.render(self)
+		if self.is_highlighted:
+			self.surface.fill((30, 60, 0, 50))
+		else:
+			self.surface.fill((0, 0, 0, 50))
+		font = pygame.font.SysFont("Arial", 16, bold=True)
+		name = font.render(self.name, True, (255, 255, 255))
+		name_rect = name.get_rect(topleft=(5, 5))
+		self.surface.blit(name, name_rect)
+		job = font.render(self.job, True, (255, 255, 255))
+		job_rect = name.get_rect(topleft=(5, 35))
+		self.surface.blit(job, job_rect)
+		time = font.render(self.convert_seconds(), True, (255, 255, 255))
+		time_rect = time.get_rect(bottomright=(self.rect[2]-5, self.rect[3]-5))
+		self.surface.blit(time, time_rect)

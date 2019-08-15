@@ -99,20 +99,19 @@ class TitleScreen(BaseScene):
 		self.options = widget.ChoiceBox(["New Game", "Continue", "Options", "Quit Game"], (cts.WINDOW_SIZE_X//4, 2*cts.WINDOW_SIZE_Y//6, cts.WINDOW_SIZE_X//2, cts.WINDOW_SIZE_Y//2))
 	
 	def action(self, mod):
-		option = self.options.get()
-		if option == "Quit Game":
-			self.running = False
-			pygame.quit()
-			exit()
+		if mod:
+			option = self.options.get()
+			if option == "Quit Game":
+				self.running = False
 
-		elif option == "New Game":
-			self.running = False
+			elif option == "New Game":
+				self.running = False
 
-		elif option == "Continue":
-			self.running = False
+			elif option == "Continue":
+				SCENES["SaveChooser"].loop(self.display)
 
-		else:
-			SCENES["Options"].loop(self.display)
+			else:
+				SCENES["Options"].loop(self.display)
 
 	def up(self, mod):
 		if mod:
@@ -245,6 +244,25 @@ class SaveChooserScene(BaseScene):
 			widget.SaveBox((0, cts.WINDOW_SIZE_Y//2, cts.WINDOW_SIZE_X, cts.WINDOW_SIZE_Y//4), 1),
 			widget.SaveBox((0, 3*cts.WINDOW_SIZE_Y//4, cts.WINDOW_SIZE_X, cts.WINDOW_SIZE_Y//4), 1)
 		)
+
+	def action(self, mod):
+		if mod:
+			cts.save.id = self.page.cursor_pos+1
+			self.running = False
+
+	def cancel(self, mod):
+		if mod:
+			self.running = False
+
+	def up(self, mod):
+		self.page.up(mod)
+
+	def down(self, mod):
+		self.page.down(mod)
+
+	def render(self):
+		BaseScene.render(self)
+		self.page.blit(self.surface)
 
 #§ Variables globales du module
 SCENES = {
