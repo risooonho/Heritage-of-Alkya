@@ -295,7 +295,7 @@ class SaveBox(BaseWidget):
 		BaseWidget.__init__(self, rect)
 		self.save_id = save_id
 		self.name = "Empty"
-		self.job = "None"
+		self.job = "unemployed"
 		self.timePlayed = 0
 		self.load_infos()
 
@@ -336,3 +336,43 @@ class SaveBox(BaseWidget):
 		time = font.render(self.convert_seconds(), True, (255, 255, 255))
 		time_rect = time.get_rect(bottomright=(self.rect[2]-5, self.rect[3]-5))
 		self.surface.blit(time, time_rect)
+
+class Button(BaseWidget):
+	"""
+	"""
+	def __init__(self, rect, label, command, *args, **kwargs):
+		BaseWidget.__init__(self, rect)
+		self.label = label
+		self.command = command
+		self.args = args
+		self.kwargs = kwargs
+		self.fg_color = (255, 255, 255)
+		self.bg_color = (150, 150, 150)
+		self.highlight_color = (100, 200, 0)
+		self.unhighlight_color = (150, 150, 150)
+		self.border_color = (0, 0, 0)
+		self.border_size = 2
+		self.font_size = 16
+		self.align = "center"
+
+	def action(self, mod):
+		if mod:
+			self.command(*self.args, **self.kwargs)
+
+	def render(self):
+		self.surface.fill(self.bg_color)
+		if self.is_highlighted:
+			self.surface.fill(self.highlight_color)
+		else:
+			self.surface.fill(self.unhighlight_color)
+		font = pygame.font.SysFont("Arial", self.font_size)
+		text = font.render(self.label, True, self.fg_color)
+		if self.align == "center":
+			text_rect = text.get_rect(center=(self.rect[2]//2, self.rect[3]//2))
+		elif self.align == "left":
+			text_rect = text.get_rect(midleft=(16, self.rect[3]//2))
+		else:
+			text_rect = text.get_rect(midright=(self.rect[2]-16, self.rect[3]//2))
+		self.surface.blit(text, text_rect)
+
+		pygame.draw.rect(self.surface, self.border_color, (0, 0, self.rect[2], self.rect[3]), self.border_size)

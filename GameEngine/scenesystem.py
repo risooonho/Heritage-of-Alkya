@@ -105,7 +105,7 @@ class TitleScreen(BaseScene):
 				self.running = False
 
 			elif option == "New Game":
-				self.running = False
+				SCENES["NewSave"].loop(self.display)
 
 			elif option == "Continue":
 				SCENES["SaveChooser"].loop(self.display)
@@ -240,9 +240,9 @@ class SaveChooserScene(BaseScene):
 		self.page = widget.Page((0, 0, cts.WINDOW_SIZE_X, cts.WINDOW_SIZE_Y))
 		self.page.add_widgets(
 			widget.SaveBox((0, 0, cts.WINDOW_SIZE_X, cts.WINDOW_SIZE_Y//4), 1),
-			widget.SaveBox((0, cts.WINDOW_SIZE_Y//4, cts.WINDOW_SIZE_X, cts.WINDOW_SIZE_Y//4), 1),
-			widget.SaveBox((0, cts.WINDOW_SIZE_Y//2, cts.WINDOW_SIZE_X, cts.WINDOW_SIZE_Y//4), 1),
-			widget.SaveBox((0, 3*cts.WINDOW_SIZE_Y//4, cts.WINDOW_SIZE_X, cts.WINDOW_SIZE_Y//4), 1)
+			widget.SaveBox((0, cts.WINDOW_SIZE_Y//4, cts.WINDOW_SIZE_X, cts.WINDOW_SIZE_Y//4), 2),
+			widget.SaveBox((0, cts.WINDOW_SIZE_Y//2, cts.WINDOW_SIZE_X, cts.WINDOW_SIZE_Y//4), 3),
+			widget.SaveBox((0, 3*cts.WINDOW_SIZE_Y//4, cts.WINDOW_SIZE_X, cts.WINDOW_SIZE_Y//4), 4 )
 		)
 
 	def action(self, mod):
@@ -264,9 +264,27 @@ class SaveChooserScene(BaseScene):
 		BaseScene.render(self)
 		self.page.blit(self.surface)
 
+class NewSaveScene(BaseScene):
+	"""
+	"""
+	def __init__(self):
+		BaseScene.__init__(self)
+		self.widgets = [
+			widget.Button((32, 32, cts.WINDOW_SIZE_X-64, 32), "Empty", self.input_name)
+		]
+		self.widgets[0].align = "left"
+
+	def input_name(self):
+		pass
+
+	def render(self):
+		for widget in self.widgets:
+			widget.blit(self.surface)
+
 #§ Variables globales du module
 SCENES = {
 	"TitleScreen": TitleScreen(),
 	"Options": OptionScene(),
-	"SaveChooser": SaveChooserScene()
+	"SaveChooser": SaveChooserScene(),
+	"NewSave": NewSaveScene()
 }
