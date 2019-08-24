@@ -1621,26 +1621,75 @@ class Map:
 		self.tileset = TILESETS_OBJECTS[0]
 		self.tiles = []
 		self.load_file()
+		self.tile_map = [[[] for _ in range(self.size[1])] for _ in range(self.size[0])]
+		self.tile_pictures_map = [[[] for _ in range(self.size[1])] for _ in range(self.size[0])]
+		self.hitbox_map = [[0 for _ in range(self.size[1])] for _ in range(self.size[0])]
+		self.convert_tile()
+		self.current_frame = 0
+		self.layout1 = pygame.Surface(cts.WINDOW_SIZE, HWSURFACE | SRCALPHA)
+		self.layout2 = pygame.Surface(cts.WINDOW_SIZE, HWSURFACE | SRCALPHA)
 
 	def load_file(self):
-		for line in file:
-			if "=" in line:
-				label, content = line[:-1].split("=")
-				if label == "Name":
-					self.name = content
-				elif label == "size":
-					self.size = eval(content)
-				elif label == "BGM":
-					self.bgm = content
-				elif label == "TilesetId":
-					self.tileset = TILESETS_OBJECTS[int(content)]
-				else:
-					self.tiles = [eval(item) for item in content.split(";")]
+		with open(self.filename, "r") as file:
+			for line in file:
+				if "=" in line:
+					label, content = line[:-1].split("=")
+					if label == "Name":
+						self.name = content
+					elif label == "size":
+						self.size = eval(content)
+					elif label == "BGM":
+						self.bgm = content
+					elif label == "TilesetId":
+						self.tileset = TILESETS_OBJECTS[int(content)]
+					else:
+						self.tiles = [eval(item) for item in content.split(";")]
 			file.close()
+
+	def convert_tile(self):
+		for tile_id, tile_pos in self.tiles:
+			self.tile_map[tile_pos[0]][tile_pos[1]].append(tile_id)
+			if self.tileset[tile_id].hitbox == 1:
+				self.hitbox_map[tile_pos[0]][tile_pos[1]] = 1
+
+		for x in range(self.size[0]):
+			for y in range(self.size[1]):
+				tiles = self.tile_map[x][y]
+				for tile_id in tiles:
+					n1 = int(tile_id in self.tile_map[max(0, x-1)][max(0, y-1)])
+					n2 = int(tile_id in self.tile_map[x][max(0, y-1)])
+					n3 = int(tile_id in self.tile_map[min(self.size[0]-1, x+1)][max(0, y-1)])
+					n4 = int(tile_id in self.tile_map[max(0, x-1)][y])
+					n5 = int(tile_id in self.tile_map[min(self.size[0]-1, x+1)][y])
+					n6 = int(tile_id in self.tile_map[max(0, x-1)][min(self.size[1]-1, y+1)])
+					n7 = int(tile_id in self.tile_map[x][min(self.size[1]-1, y+1)])
+					n8 = int(tile_id in self.tile_map[min(self.size[0]-1, x+1)][min(self.size[1]-1, y+1)])
+					neighborhood = str(n1)+str(n2)+str(n3)+str(n4)+str(n5)+str(n6)+str(n7)+str(n8)
+					pictures = self.tileset[tile_id].pictures[self.tileset[tile_id].picture_choice_mapping[neighborhood]]
+					self.tile_pictures_map[x][y].append(pictures)
+
+	def update(self, fps, camera):
+		self.layout1.fill((0, 0, 0, 0))
+		self.layout2.fill((0, 0, 0, 0))
+		camera_x, camera_y = camera
+		min_x = camera_x//cts.TILE_SIZE
+		min_y = camera_y//cts.TILE_SIZE
+		for x in range(min_x, min(self.size[0], min_x+cts.TILE_NUMBER_X+1)):
+			for y in range(min_y, min(self.size[1], min_y+cts.TILE_NUMBER_Y+1)):
+				tiles, display_pos = self.tile_pictures_map[x][y], (x*cts.TILE_SIZE-camera_x, y*cts.TILE_SIZE-camera_y)
+				for i, pictures in enumerate(tiles):
+					picture = pictures[self.current_frame//int(fps*cts.TILE_ANIMATION_PERIOD)%self.tileset[self.tile_map[x][y][i]].nb_frames]
+					if self.tileset[self.tile_map[x][y][i]].hitbox < 2:
+						self.layout1.blit(picture, display_pos)
+					else:
+						self.layout2.blit(picture, display_pos)
+
+		self.current_frame += 1
 
 #§ Création des fonctions du module
 def init():
+	global MAPS
 	for i in range(len(TILESETS)):
 		TILESETS_OBJECTS.append(Tileset(i))
-
-	MAPS = {map.name: map for map in [Map("GameAssets\\Maps\\" + filename) for filename in os.listdir("GameAssets\\Maps")]}
+	MAPS = {map.name: map for map in [Map("GameAssets\\Maps\\{}".format(filename)) for filename in os.listdir("GameAssets\\Maps")]}
+	print(MAPS)

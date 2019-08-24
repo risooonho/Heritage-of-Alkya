@@ -43,13 +43,15 @@ GE.mapsystem.init()
 THREAD_RUN = False
 thread.join()
 
+print(GE.mapsystem.MAPS)
+
 #§ Création des variables globales de l'application
 WINDOW_X = 70+29*48
 WINDOW_Y = 40+21*48
 GE.mapsystem.cts.TILE_NUMBER_X = 21
 GE.mapsystem.cts.TILE_NUMBER_Y = 21
 GE.mapsystem.cts.WINDOW_SIZE = (21*48, 21*48)
-GE.mapsystem.cts.TILE_ANIMATION_PERIOD = 0.25
+GE.mapsystem.cts.TILE_ANIMATION_PERIOD = 0.1
 
 #§ Création des objets du jeu
 class App:
@@ -88,7 +90,7 @@ class App:
 		self.end_selection = (0, 0)
 
 		# Création des objets rattachés à l'objet
-		self.map = GE.mapsystem.Map((17, 13), 0)
+		self.map = GE.mapsystem.Map("GameAssets\\Maps\\MAP001.sha")
 
 		# Création de la surface de font et des composants pygame sur la fenêtre
 		self.font = pygame.font.SysFont("Arial", 16)
@@ -135,30 +137,30 @@ class App:
 		x, y = pos
 		if len(self.current_tiles) == 1 and len(self.current_tiles[0]) == 1:
 			tile_hitbox = self.map.tileset[self.current_tiles[0][0]].hitbox
-			cibled_tile = self.map.tile_map[tile_hitbox][x][y][-1]
+			cibled_tile = self.map.tile_map[x][y][-1]
 			replace_tile = self.current_tiles[0][0]
 			pile = []
 			pile.append((x, y))
 			while pile != []:
 				x1, y1 = pile.pop()
 				for i in range(tile_hitbox+1, 3):
-					self.map.tile_map[i][x1][y1] = [("B", 0)]
+					self.map.tile_map[x1][y1] = [("B", 0)]
 				seen = False
 				tile_list = []
-				for tile_2 in self.map.tile_map[tile_hitbox][x1][y1]:
+				for tile_2 in self.map.tile_map[x1][y1]:
 					if tile_2 == replace_tile:
 						seen = True
 					if not seen:
 						tile_list.append(tile_2)
 				tile_list.append(replace_tile)
-				self.map.tile_map[tile_hitbox][x1][y1] = tile_list
-				if not x1 == self.map.size[0]-1 and self.map.tile_map[tile_hitbox][x1+1][y1][-1] == cibled_tile:
+				self.map.tile_map[x1][y1] = tile_list
+				if not x1 == self.map.size[0]-1 and self.map.tile_map[x1+1][y1][-1] == cibled_tile:
 					pile.append((x1+1, y1))
-				if not x1 == 0 and self.map.tile_map[tile_hitbox][x1-1][y1][-1] == cibled_tile:
+				if not x1 == 0 and self.map.tile_map[x1-1][y1][-1] == cibled_tile:
 					pile.append((x1-1, y1))
-				if not y1 == self.map.size[1]-1 and self.map.tile_map[tile_hitbox][x1][y1+1][-1] == cibled_tile:
+				if not y1 == self.map.size[1]-1 and self.map.tile_map[x1][y1+1][-1] == cibled_tile:
 					pile.append((x1, y1+1))
-				if not y1 == 0 and self.map.tile_map[tile_hitbox][x1][y1-1][-1] == cibled_tile:
+				if not y1 == 0 and self.map.tile_map[x1][y1-1][-1] == cibled_tile:
 					pile.append((x1, y1-1))
 
 	def create_new_map(self):
@@ -364,17 +366,17 @@ class App:
 										tile_hitbox = self.map.tileset[tile].hitbox
 										if not (tile_pos[0]+x >= self.map.size[0] or tile_pos[1]+y >= self.map.size[1]):
 											for i in range(tile_hitbox+1, 3):
-												self.map.tile_map[i][tile_pos[0]+x][tile_pos[1]+y] = [("B", 0)]
+												self.map.tile_map[tile_pos[0]+x][tile_pos[1]+y] = [("B", 0)]
 
 											seen = False
 											tile_list = []
-											for tile_2 in self.map.tile_map[tile_hitbox][tile_pos[0]+x][tile_pos[1]+y]:
+											for tile_2 in self.map.tile_map[tile_pos[0]+x][tile_pos[1]+y]:
 												if tile_2 == tile:
 													seen = True
 												if not seen:
 													tile_list.append(tile_2)
 											tile_list.append(tile)
-											self.map.tile_map[tile_hitbox][tile_pos[0]+x][tile_pos[1]+y] = tile_list
+											self.map.tile_map[tile_pos[0]+x][tile_pos[1]+y] = tile_list
 					self.rectangle = False
 					self.filler = False
 					self.select_tiles = False
@@ -418,25 +420,25 @@ class App:
 						tile_hitbox = self.map.tileset[tile].hitbox
 						if not (tile_pos[0]+x >= self.map.size[0] or tile_pos[1]+y >= self.map.size[1]):
 							for i in range(tile_hitbox+1, 3):
-								self.map.tile_map[i][tile_pos[0]+x][tile_pos[1]+y] = [("B", 0)]
+								self.map.tile_map[tile_pos[0]+x][tile_pos[1]+y] = [("B", 0)]
 
 							seen = False
 							tile_list = []
-							for tile_2 in self.map.tile_map[tile_hitbox][tile_pos[0]+x][tile_pos[1]+y]:
+							for tile_2 in self.map.tile_map[tile_pos[0]+x][tile_pos[1]+y]:
 								if tile_2 == tile:
 									seen = True
 								if not seen:
 									tile_list.append(tile_2)
 							tile_list.append(tile)
-							self.map.tile_map[tile_hitbox][tile_pos[0]+x][tile_pos[1]+y] = tile_list
+							self.map.tile_map[tile_pos[0]+x][tile_pos[1]+y] = tile_list
 
 			# Affichage de la frame
 			self.display.fill((255, 255, 255))
 			pygame.draw.rect(self.display, (100, 100, 100), (WINDOW_X-30, 10+scroll_y_map, 20, scroll_y_map_size))
 			pygame.draw.rect(self.display, (100, 100, 100), (8*48+40+scroll_x_map, WINDOW_Y-30, scroll_x_map_size, 20))
 			self.map.update(self.fps, self.camera)
-			for layout in self.map.layouts:
-				self.display.blit(layout, (8*48+40, 10))
+			self.display.blit(self.map.layout1, (8*48+40, 10))
+			self.display.blit(self.map.layout2, (8*48+40, 10))
 			if self.current_tileset_type == "A":
 				x = 0
 				for tile in self.map.tileset.tiles["A1"]:

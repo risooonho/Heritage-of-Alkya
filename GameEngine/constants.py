@@ -38,3 +38,6 @@ save = savesystem.Save()
 
 #§ Variables de chemins
 OPTION_PATH = optionssystem.OPTION_PATH
+
+#§ Variables de system
+NB_WORKER_MAPUPDATE = 1
