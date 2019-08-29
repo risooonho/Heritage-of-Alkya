@@ -1613,14 +1613,15 @@ TILESETS_OBJECTS = []
 class Map:
 	"""
 	"""
-	def __init__(self, filename):
+	def __init__(self, filename=None):
 		self.filename = filename
 		self.name = "New Map"
 		self.size = (17, 13)
-		self.bgm = None
+		self.bgm = ""
 		self.tileset = TILESETS_OBJECTS[0]
 		self.tiles = []
-		self.load_file()
+		if filename:
+			self.load_file()
 		self.tile_map = [[[] for _ in range(self.size[1])] for _ in range(self.size[0])]
 		self.tile_pictures_map = [[[] for _ in range(self.size[1])] for _ in range(self.size[0])]
 		self.hitbox_map = [[0 for _ in range(self.size[1])] for _ in range(self.size[0])]
@@ -1649,8 +1650,10 @@ class Map:
 	def convert_tile(self):
 		for tile_id, tile_pos in self.tiles:
 			self.tile_map[tile_pos[0]][tile_pos[1]].append(tile_id)
-			if self.tileset[tile_id].hitbox == 1:
-				self.hitbox_map[tile_pos[0]][tile_pos[1]] = 1
+		for x in range(self.size[0]):
+			for y in range(self.size[1]):
+				if self.tileset[self.tile_map[x][y][-1]].hitbox == 1:
+					self.hitbox_map[x][y] = 1
 
 		for x in range(self.size[0]):
 			for y in range(self.size[1]):
@@ -1687,9 +1690,14 @@ class Map:
 		self.current_frame += 1
 
 #§ Création des fonctions du module
-def init():
-	global MAPS
+def init_tilesets():
 	for i in range(len(TILESETS)):
 		TILESETS_OBJECTS.append(Tileset(i))
+
+def init_maps():
+	global MAPS
 	MAPS = {map.name: map for map in [Map("GameAssets\\Maps\\{}".format(filename)) for filename in os.listdir("GameAssets\\Maps")]}
-	print(MAPS)
+
+def init():
+	init_tilesets()
+	init_maps()

@@ -16,8 +16,7 @@ display = pygame.display.set_mode(cts.WINDOW_SIZE, cts.HWSURFACE | cts.DOUBLEBUF
 
 """GE.scenesystem.SCENES["TitleScreen"].loop(display)"""
 GE.mapsystem.init()
-MAP = GE.mapsystem.MAPS["MAP001"]
-print(MAP.hitbox_map)
+MAP = GE.mapsystem.MAPS["New Map"]
 clock = pygame.time.Clock()
 FPS_UPDATE = cts.USEREVENT + 1
 pygame.time.set_timer(FPS_UPDATE, 5000)
@@ -31,7 +30,6 @@ while True:
 
 		elif event.type == FPS_UPDATE:
 			fps = int(clock.get_fps())
-			print(fps)
 
 		else:
 			pass
