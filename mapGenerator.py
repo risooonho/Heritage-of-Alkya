@@ -149,10 +149,16 @@ class App:
 
 		else:
 			if self.scrolling_map_x:
-				pass
+				self.scrolling_map_x = False
+				mouse_x, mouse_y = pygame.mouse.get_pos()
+				x = min(max(40+8*48+min(WINDOW_X-70-8*48, (19*48)/(GE.mapsystem.MAPS[self.current_map].size[0]*48)*(WINDOW_X-70-8*48))/2, mouse_x), WINDOW_X-30-min(WINDOW_X-70-8*48, (19*48)/(GE.mapsystem.MAPS[self.current_map].size[0]*48)*(WINDOW_X-70-8*48))/2)
+				self.map_scroll_x = (GE.mapsystem.MAPS[self.current_map].size[0]*48)*(x-40-8*48-min(WINDOW_X-70-8*48, (19*48)/(GE.mapsystem.MAPS[self.current_map].size[1]*48)*(WINDOW_X-70-8*48))/2)/(19*48)
 
 			if self.scrolling_map_y:
-				pass
+				self.scrolling_map_y = False
+				mouse_x, mouse_y = pygame.mouse.get_pos()
+				y = min(max(20+min(WINDOW_Y-50, (19*48)/(GE.mapsystem.MAPS[self.current_map].size[1]*48)*(WINDOW_Y-50))/2, mouse_y), WINDOW_Y-30-min(WINDOW_Y-50, (19*48)/(GE.mapsystem.MAPS[self.current_map].size[1]*48)*(WINDOW_Y-50))/2)
+				self.map_scroll_y = (GE.mapsystem.MAPS[self.current_map].size[1]*48)*(y-20-min(WINDOW_Y-50, (19*48)/(GE.mapsystem.MAPS[self.current_map].size[1]*48)*(WINDOW_Y-50))/2)/(19*48)
 
 			if self.scrolling_tileset_y:
 				self.scrolling_tileset_y = False
@@ -164,7 +170,19 @@ class App:
 				self.use_pencil_tool = False
 
 			if self.use_rectangle_tool:
-				pass
+				self.use_rectangle_tool = False
+				old_x, old_y = self.rect_save_coordinates
+				new_x, new_y = pygame.mouse.get_pos()
+				old_case_x = (old_x-8*48+self.map_scroll_x)//48
+				old_case_y = (old_y-20+self.map_scroll_y)//48
+				new_case_x = (new_x-8*48+self.map_scroll_x)//48
+				new_case_y = (new_y-20+self.map_scroll_y)//48
+				for x in range(int(min(old_case_x, new_case_x)), int(max(old_case_x, new_case_x)+1)):
+					for y in range(int(min(old_case_y, new_case_y)), int(max(old_case_y, new_case_y)+1)):
+						try:
+							self.add_tiles(self.tiles_selected, (x, y))
+						except Exception as e:
+							print(e)
 
 			if self.select_tiles:
 				self.select_tiles = False
@@ -195,7 +213,7 @@ class App:
 					old_case_y = (old_y-20+self.tileset_scroll_y)//48
 					new_case_x = (mouse_x-10)//48
 					new_case_y = (mouse_y-20+self.tileset_scroll_y)//48
-					self.tiles_selected = [[(self.tileset_type_selected, y*8+x) for y in range(min(old_case_y, new_case_y), max(old_case_y, new_case_y)+1)] for x in range(min(old_case_x, new_case_x), max(old_case_x, new_case_x)+1)]
+					self.tiles_selected = [[(self.tileset_type_selected, y*8+x) for y in range(int(min(old_case_y, new_case_y)), int(max(old_case_y, new_case_y)+1))] for x in range(int(min(old_case_x, new_case_x)), int(max(old_case_x, new_case_x)+1))]
 
 	def use_filler(self, x, y):
 		if len(self.tiles_selected) == 1 and len(self.tiles_selected[0]) == 1:
@@ -319,6 +337,15 @@ class App:
 			x2, y2 = self.tiles_selected[-1][-1][1]%8, self.tiles_selected[-1][-1][1]//8
 			pygame.draw.rect(self.display, (200, 255, 200), (10+x1*48, 20+y1*48-self.tileset_scroll_y, (x2-x1+1)*48, (y2-y1+1)*48), 4)
 
+		if self.use_rectangle_tool:
+			old_x, old_y = self.rect_save_coordinates
+			new_x, new_y = pygame.mouse.get_pos()
+			old_case_x = (old_x-40-8*48+self.map_scroll_x)//48
+			old_case_y = (old_y-20+self.map_scroll_y)//48
+			new_case_x = (new_x-40-8*48+self.map_scroll_x)//48
+			new_case_y = (new_y-20+self.map_scroll_y)//48
+			pygame.draw.rect(self.display, (100, 100, 100), (40+8*48+min(old_case_x, new_case_x)*48-self.map_scroll_x, 20+min(old_case_y, new_case_y)*48-self.map_scroll_y, (abs(old_case_x-new_case_x)+1)*48, (abs(old_case_y-new_case_y)+1)*48), 4)
+
 	def loop(self):
 		self.running = True
 
@@ -335,10 +362,12 @@ class App:
 					self.running = False
 
 				elif event.type == MOUSEBUTTONDOWN:
-					self.action(1)
+					if event.button == 1:
+						self.action(1)
 
 				elif event.type == MOUSEBUTTONUP:
-					self.action(0)
+					if event.button == 1:
+						self.action(0)
 
 				elif event.type == FPSUPDATE:
 					self.fps = clock.get_fps()
@@ -347,7 +376,7 @@ class App:
 					pass
 
 			# Calcul des frames
-			GE.mapsystem.MAPS[self.current_map].update(self.fps, (self.map_scroll_x, self.map_scroll_y))
+			GE.mapsystem.MAPS[self.current_map].update(self.fps, (int(self.map_scroll_x), int(self.map_scroll_y)))
 
 			# Update la selection de tiles
 			if self.select_tiles:
@@ -378,12 +407,22 @@ class App:
 					old_case_y = (old_y-20+self.tileset_scroll_y)//48
 					new_case_x = (mouse_x-10)//48
 					new_case_y = (mouse_y-20+self.tileset_scroll_y)//48
-					self.tiles_selected = [[(self.tileset_type_selected, y*8+x) for y in range(min(old_case_y, new_case_y), max(old_case_y, new_case_y)+1)] for x in range(min(old_case_x, new_case_x), max(old_case_x, new_case_x)+1)]
+					self.tiles_selected = [[(self.tileset_type_selected, y*8+x) for y in range(int(min(old_case_y, new_case_y)), int(max(old_case_y, new_case_y)+1))] for x in range(int(min(old_case_x, new_case_x)), int(max(old_case_x, new_case_x)+1))]
 
 			if self.scrolling_tileset_y:
 				mouse_x, mouse_y = pygame.mouse.get_pos()
 				y = min(max(20+min(WINDOW_Y-50, (19*48)/(32*48)*(WINDOW_Y-50))/2, mouse_y), WINDOW_Y-30-min(WINDOW_Y-50, (19*48)/(32*48)*(WINDOW_Y-50))/2)
 				self.tileset_scroll_y = (32*48)*(y-20-min(WINDOW_Y-50, (19*48)/(32*48)*(WINDOW_Y-50))/2)/(19*48)
+
+			if self.scrolling_map_y:
+				mouse_x, mouse_y = pygame.mouse.get_pos()
+				y = min(max(20+min(WINDOW_Y-50, (19*48)/(GE.mapsystem.MAPS[self.current_map].size[1]*48)*(WINDOW_Y-50))/2, mouse_y), WINDOW_Y-30-min(WINDOW_Y-50, (19*48)/(GE.mapsystem.MAPS[self.current_map].size[1]*48)*(WINDOW_Y-50))/2)
+				self.map_scroll_y = (GE.mapsystem.MAPS[self.current_map].size[1]*48)*(y-20-min(WINDOW_Y-50, (19*48)/(GE.mapsystem.MAPS[self.current_map].size[1]*48)*(WINDOW_Y-50))/2)/(19*48)
+
+			if self.scrolling_map_x:
+				mouse_x, mouse_y = pygame.mouse.get_pos()
+				x = min(max(40+8*48+min(WINDOW_X-70-8*48, (19*48)/(GE.mapsystem.MAPS[self.current_map].size[0]*48)*(WINDOW_X-70-8*48))/2, mouse_x), WINDOW_X-30-min(WINDOW_X-70-8*48, (19*48)/(GE.mapsystem.MAPS[self.current_map].size[0]*48)*(WINDOW_X-70-8*48))/2)
+				self.map_scroll_x = (GE.mapsystem.MAPS[self.current_map].size[0]*48)*(x-40-8*48-min(WINDOW_X-70-8*48, (19*48)/(GE.mapsystem.MAPS[self.current_map].size[1]*48)*(WINDOW_X-70-8*48))/2)/(19*48)
 
 			# Affichage des frames
 			self.render()
