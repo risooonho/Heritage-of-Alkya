@@ -1,3 +1,4 @@
+from . import logger
 from . import optionssystem
 from . import savesystem
 from . import constants

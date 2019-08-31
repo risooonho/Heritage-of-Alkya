@@ -14,4 +14,30 @@ pygame.init()
 
 display = pygame.display.set_mode(cts.WINDOW_SIZE, cts.HWSURFACE | cts.DOUBLEBUF)
 
-GE.scenesystem.SCENES["TitleScreen"].loop(display)
+"""GE.scenesystem.SCENES["TitleScreen"].loop(display)"""
+GE.mapsystem.init()
+MAP = GE.mapsystem.MAPS["New Map"]
+clock = pygame.time.Clock()
+FPS_UPDATE = cts.USEREVENT + 1
+pygame.time.set_timer(FPS_UPDATE, 5000)
+fps = cts.MIN_FPS
+while True:
+	clock.tick()
+	
+	for event in pygame.event.get():
+		if event.type == cts.QUIT:
+			pygame.quit()
+
+		elif event.type == FPS_UPDATE:
+			fps = int(clock.get_fps())
+
+		else:
+			pass
+	display.fill((0, 0, 0))
+	MAP.update(max(cts.MIN_FPS, fps), (0, 0))
+	display.blit(MAP.layout1, (0, 0))
+	display.blit(MAP.layout2, (0, 0))
+	pygame.display.flip()
+
+
+
