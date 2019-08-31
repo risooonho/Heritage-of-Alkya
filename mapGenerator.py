@@ -63,20 +63,85 @@ class App:
 
 		# Création des variables system de l'app
 		self.fps = GE.constants.MIN_FPS
-		self.maps_name = GE.mapsystem.MAPS.keys()
 		self.font = pygame.font.SysFont("Arial", 16, bold=True)
 		self.rect_save_coordinates = (0, 0)
 
 	def create_new_map(self):
-		print("Creating a new map")
+		fen = tk.Tk()
+		fen.title("Create a new map")
+		frame1 = tk.Frame(fen)
+		label_name = tk.Label(frame1, text="Nom de la map")
+		label_name.grid(row=0, column=0)
+		entry_name = tk.Entry(frame1, textvariable="default")
+		entry_name.grid(row=0, column=1)
+		label_size = tk.Label(frame1, text="Taille de la map")
+		label_size.grid(row=1, column=0)
+		size_x_entry = tk.Entry(frame1, textvariable="17")
+		size_y_entry = tk.Entry(frame1, textvariable="13")
+		size_x_entry.grid(row=1, column=1)
+		size_y_entry.grid(row=1, column=2)
+		label_tileset = tk.Label(frame1, text="Id du tileset (entre 0 et {})".format(len(GE.mapsystem.TILESETS)-1))
+		label_tileset.grid(row=2, column=0)
+		tileset_entry = tk.Entry(frame1, textvariable="0")
+		tileset_entry.grid(row=2, column=1)
+		label_BGM = tk.Label(frame1, text="Nom de la musique BGM")
+		label_BGM.grid(row=3, column=0)
+		entry_BGM = tk.Entry(frame1, textvariable="")
+		entry_BGM.grid(row=3, column=1)
+
+		def get_values():
+			name = entry_name.get()
+			size_x = int(size_x_entry.get())
+			size_y = int(size_y_entry.get())
+			tileset = int(tileset_entry.get())
+			BGM = entry_BGM.get()
+			if name in GE.mapsystem.MAPS.keys():
+				fen.destroy()
+			else:
+				self.current_map = name
+				with open("GameAssets\\Maps\\{}.sha".format(name), "w") as file: file.close()
+				MAP = GE.mapsystem.Map()
+				MAP.filename = "GameAssets\\Maps\\{}.sha".format(name)
+				MAP.name = name
+				MAP.tileset_id = tileset
+				MAP.size = (size_x, size_y)
+				MAP.bgm = BGM
+				MAP.tiles = []
+				MAP.tile_map = [[[("B", 0)] for _ in range(size_y)] for _ in range(size_x)]
+				MAP.convert_tile()
+				MAP.update_tiles()
+				GE.mapsystem.MAPS[name] = MAP
+				print(GE.mapsystem.MAPS)
+				self.save_map()
+			fen.destroy()
+			pygame.display.set_caption("MapGenerator - Heritage of Alkya | Map [{}]".format(name))
+
+		valider_button = tk.Button(frame1, text="Valider", bg="lightgreen", fg="white", command=get_values)
+		valider_button.grid(row=4, column=0)
+
+		frame1.pack()
+		fen.mainloop()
 
 	def load_map(self):
-		print("Loading a map")
+		fen = tk.Tk()
+		fen.title("Charger une map existante")
+		liste = tk.Listbox(fen)
+		for i, name in enumerate(GE.mapsystem.MAPS.keys()):
+			liste.insert(i+1, name)
+		liste.grid(row=0, column=0)
+		def execute():
+			name = liste.get(tk.ACTIVE)
+			self.current_map = name
+			fen.destroy()
+			pygame.display.set_caption("MapGenerator - Heritage of Alkya | Map [{}]".format(name))
+		valider_button = tk.Button(fen, text="Valider", fg="white", bg="lightgreen", command=execute)
+		valider_button.grid(row=0, column=1)
+		fen.mainloop()
 
 	def save_map(self):
-		print("Saving the current map")
 		filename = GE.mapsystem.MAPS[self.current_map].filename
 		MAP = GE.mapsystem.MAPS[self.current_map]
+		MAP.update_tiles()
 		with open(filename, "w") as file:
 			file.write("Name={}\n".format(MAP.name))
 			file.write("Size={}\n".format(MAP.size))
@@ -138,7 +203,7 @@ class App:
 								self.rect_save_coordinates = (mouse_x, mouse_y)
 
 							else:
-								self.use_filler((mouse_x+self.map_scroll_x-40-8*48)//48, (mouse_y+self.map_scroll_y-20)//48)
+								self.use_filler(int((mouse_x+self.map_scroll_x-40-8*48)//48), int((mouse_y+self.map_scroll_y-20)//48))
 
 						else:
 							self.scrolling_map_y = True
@@ -151,8 +216,8 @@ class App:
 			if self.scrolling_map_x:
 				self.scrolling_map_x = False
 				mouse_x, mouse_y = pygame.mouse.get_pos()
-				x = min(max(40+8*48+min(WINDOW_X-70-8*48, (19*48)/(GE.mapsystem.MAPS[self.current_map].size[0]*48)*(WINDOW_X-70-8*48))/2, mouse_x), WINDOW_X-30-min(WINDOW_X-70-8*48, (19*48)/(GE.mapsystem.MAPS[self.current_map].size[0]*48)*(WINDOW_X-70-8*48))/2)
-				self.map_scroll_x = (GE.mapsystem.MAPS[self.current_map].size[0]*48)*(x-40-8*48-min(WINDOW_X-70-8*48, (19*48)/(GE.mapsystem.MAPS[self.current_map].size[1]*48)*(WINDOW_X-70-8*48))/2)/(19*48)
+				x = min(max(40+8*48+min(19*48, (19*48)/(GE.mapsystem.MAPS[self.current_map].size[0]*48)*(19*48))/2, mouse_x), WINDOW_X-30-min(19*48, (19*48)/(GE.mapsystem.MAPS[self.current_map].size[0]*48)*(19*48))/2)
+				self.map_scroll_x = (GE.mapsystem.MAPS[self.current_map].size[0]*48)*(x-40-8*48-min(WINDOW_X-70-8*48, (19*48)/(GE.mapsystem.MAPS[self.current_map].size[0]*48)*(WINDOW_X-70-8*48))/2)/(19*48)
 
 			if self.scrolling_map_y:
 				self.scrolling_map_y = False
@@ -217,10 +282,53 @@ class App:
 
 	def use_filler(self, x, y):
 		if len(self.tiles_selected) == 1 and len(self.tiles_selected[0]) == 1:
-			pass
+			stack = []
+			targeted_tile_id = GE.mapsystem.MAPS[self.current_map].tile_map[x][y][-1]
+			stack.append((x, y))
+			while not stack == []:
+				x, y = stack.pop()
+				try:
+					if GE.mapsystem.MAPS[self.current_map].tile_map[x-1][y][-1] == targeted_tile_id and not (x-1, y) in stack and not x-1 < 0:
+						stack.append((x-1, y))
+				except:
+					pass
+				try:
+					if GE.mapsystem.MAPS[self.current_map].tile_map[x+1][y][-1] == targeted_tile_id and not (x+1, y) in stack:
+						stack.append((x+1, y))
+				except:
+					pass
+				try:
+					if GE.mapsystem.MAPS[self.current_map].tile_map[x][y-1][-1] == targeted_tile_id and not (x, y-1) in stack and not y-1 < 0:
+						stack.append((x, y-1))
+				except:
+					pass
+				try:
+					if GE.mapsystem.MAPS[self.current_map].tile_map[x][y+1][-1] == targeted_tile_id and not (x, y+1) in stack:
+						stack.append((x, y+1))
+				except:
+					pass
+
+				self.add_tiles(self.tiles_selected, (x, y))
 
 	def add_tiles(self, tiles, pos):
-		pass
+		top_left_x, top_left_y = pos
+		for x, tile_line in enumerate(tiles):
+			for y, tile in enumerate(tile_line):
+				try:
+					request_tiles = GE.mapsystem.MAPS[self.current_map].tile_map[top_left_x+x][top_left_y+y]
+					found = False
+					new_tiles = []
+					for tile_id in request_tiles:
+						if tile_id == tile:
+							found = True
+						if not found:
+							new_tiles.append(tile_id)
+					new_tiles.append(tile)
+					GE.mapsystem.MAPS[self.current_map].tile_map[top_left_x+x][top_left_y+y] = new_tiles
+				except Exception as e:
+					print(e)
+
+		GE.mapsystem.MAPS[self.current_map].update_tiles()
 
 	def render(self):
 		self.display.fill((5, 10, 20))
@@ -423,6 +531,13 @@ class App:
 				mouse_x, mouse_y = pygame.mouse.get_pos()
 				x = min(max(40+8*48+min(WINDOW_X-70-8*48, (19*48)/(GE.mapsystem.MAPS[self.current_map].size[0]*48)*(WINDOW_X-70-8*48))/2, mouse_x), WINDOW_X-30-min(WINDOW_X-70-8*48, (19*48)/(GE.mapsystem.MAPS[self.current_map].size[0]*48)*(WINDOW_X-70-8*48))/2)
 				self.map_scroll_x = (GE.mapsystem.MAPS[self.current_map].size[0]*48)*(x-40-8*48-min(WINDOW_X-70-8*48, (19*48)/(GE.mapsystem.MAPS[self.current_map].size[1]*48)*(WINDOW_X-70-8*48))/2)/(19*48)
+
+			if self.use_pencil_tool:
+				mouse_x, mouse_y = pygame.mouse.get_pos()
+				if 8*48+40 < mouse_x < WINDOW_X-30 and 20 < mouse_y < WINDOW_Y-30:
+					case_x = (mouse_x+self.map_scroll_x-8*48-40)//48
+					case_y = (mouse_y-20+self.map_scroll_y)//48
+					self.add_tiles(self.tiles_selected, (case_x, case_y))
 
 			# Affichage des frames
 			self.render()

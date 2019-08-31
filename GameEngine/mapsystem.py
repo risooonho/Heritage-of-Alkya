@@ -1622,8 +1622,7 @@ class Map:
 		self.tiles = []
 		if filename:
 			self.load_file()
-		self.tile_map = [[[] for _ in range(self.size[1])] for _ in range(self.size[0])]
-		self.tile_pictures_map = [[[] for _ in range(self.size[1])] for _ in range(self.size[0])]
+		self.tile_map = [[[("B", 0)] for _ in range(self.size[1])] for _ in range(self.size[0])]
 		self.hitbox_map = [[0 for _ in range(self.size[1])] for _ in range(self.size[0])]
 		self.convert_tile()
 		self.current_frame = 0
@@ -1637,7 +1636,7 @@ class Map:
 					label, content = line[:-1].split("=")
 					if label == "Name":
 						self.name = content
-					elif label == "size":
+					elif label == "Size":
 						self.size = eval(content)
 					elif label == "BGM":
 						self.bgm = content
@@ -1647,6 +1646,13 @@ class Map:
 						self.tiles = [eval(item) for item in content.split(";")]
 			file.close()
 
+	def update_tiles(self):
+		self.tiles = []
+		for x in range(self.size[0]):
+			for y in range(self.size[1]):
+				for tile in self.tile_map[x][y]:
+					self.tiles.append((tile, (x, y)))
+
 	def convert_tile(self):
 		for tile_id, tile_pos in self.tiles:
 			self.tile_map[tile_pos[0]][tile_pos[1]].append(tile_id)
@@ -1655,10 +1661,16 @@ class Map:
 				if self.tileset[self.tile_map[x][y][-1]].hitbox == 1:
 					self.hitbox_map[x][y] = 1
 
-		for x in range(self.size[0]):
-			for y in range(self.size[1]):
-				tiles = self.tile_map[x][y]
-				for tile_id in tiles:
+	def update(self, fps, camera):
+		self.layout1.fill((0, 0, 0, 0))
+		self.layout2.fill((0, 0, 0, 0))
+		camera_x, camera_y = camera
+		min_x = camera_x//cts.TILE_SIZE
+		min_y = camera_y//cts.TILE_SIZE
+		for x in range(min_x, min(self.size[0], min_x+cts.TILE_NUMBER_X+1)):
+			for y in range(min_y, min(self.size[1], min_y+cts.TILE_NUMBER_Y+1)):
+				display_pos = (x*cts.TILE_SIZE-camera_x, y*cts.TILE_SIZE-camera_y)
+				for tile_id in self.tile_map[x][y]:
 					n1 = int(tile_id in self.tile_map[max(0, x-1)][max(0, y-1)])
 					n2 = int(tile_id in self.tile_map[x][max(0, y-1)])
 					n3 = int(tile_id in self.tile_map[min(self.size[0]-1, x+1)][max(0, y-1)])
@@ -1669,20 +1681,8 @@ class Map:
 					n8 = int(tile_id in self.tile_map[min(self.size[0]-1, x+1)][min(self.size[1]-1, y+1)])
 					neighborhood = str(n1)+str(n2)+str(n3)+str(n4)+str(n5)+str(n6)+str(n7)+str(n8)
 					pictures = self.tileset[tile_id].pictures[self.tileset[tile_id].picture_choice_mapping[neighborhood]]
-					self.tile_pictures_map[x][y].append(pictures)
-
-	def update(self, fps, camera):
-		self.layout1.fill((0, 0, 0, 0))
-		self.layout2.fill((0, 0, 0, 0))
-		camera_x, camera_y = camera
-		min_x = camera_x//cts.TILE_SIZE
-		min_y = camera_y//cts.TILE_SIZE
-		for x in range(min_x, min(self.size[0], min_x+cts.TILE_NUMBER_X+1)):
-			for y in range(min_y, min(self.size[1], min_y+cts.TILE_NUMBER_Y+1)):
-				tiles, display_pos = self.tile_pictures_map[x][y], (x*cts.TILE_SIZE-camera_x, y*cts.TILE_SIZE-camera_y)
-				for i, pictures in enumerate(tiles):
-					picture = pictures[self.current_frame//int(fps*cts.TILE_ANIMATION_PERIOD)%self.tileset[self.tile_map[x][y][i]].nb_frames]
-					if self.tileset[self.tile_map[x][y][i]].hitbox < 2:
+					picture = pictures[self.current_frame//int(fps*cts.TILE_ANIMATION_PERIOD)%self.tileset[tile_id].nb_frames]
+					if self.tileset[tile_id].hitbox < 2:
 						self.layout1.blit(picture, display_pos)
 					else:
 						self.layout2.blit(picture, display_pos)
