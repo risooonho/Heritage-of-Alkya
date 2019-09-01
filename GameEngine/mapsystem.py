@@ -306,7 +306,7 @@ class Tile:
 		"""
 		self.nb_frames += 1
 
-		imagepath = "GameAssets\\Tilesets\\pictures\\{}.png".format(image)
+		imagepath = os.getcwd() + "/GameAssets/Tilesets/pictures/{}.png".format(image)
 
 		tiles_pictures = pygame.image.load(imagepath).convert_alpha()
 		if type == "field":
@@ -1473,7 +1473,7 @@ class Tileset:
 		tile.set_hitbox(1)
 		self.tiles["A1"].append(tile)
 
-		with open("GameAssets\\Tilesets\\data\\{}.sha".format(TILESETS[self.tileset_id]["A1"]), "r") as file:
+		with open(os.getcwd() + "/GameAssets/Tilesets/data/{}.sha".format(TILESETS[self.tileset_id]["A1"]), "r") as file:
 			content = file.read()
 			for i, hitbox in enumerate(content):
 				self.tiles["A1"][i].hitbox = int(hitbox)
@@ -1486,7 +1486,7 @@ class Tileset:
 				tile.load_picture(TILESETS[self.tileset_id]["A2"], (x*2*cts.TILE_SIZE, 3*y*cts.TILE_SIZE))
 				self.tiles["A2"].append(tile)
 
-		with open("GameAssets\\Tilesets\\data\\{}.sha".format(TILESETS[self.tileset_id]["A2"]), "r") as file:
+		with open(os.getcwd() + "/GameAssets/Tilesets/data/{}.sha".format(TILESETS[self.tileset_id]["A2"]), "r") as file:
 			content = file.read()
 			for i, hitbox in enumerate(content):
 				self.tiles["A2"][i].hitbox = int(hitbox)
@@ -1500,7 +1500,7 @@ class Tileset:
 				tile.set_hitbox(1)
 				self.tiles["A3"].append(tile)
 
-		with open("GameAssets\\Tilesets\\data\\{}.sha".format(TILESETS[self.tileset_id]["A3"]), "r") as file:
+		with open(os.getcwd() + "/GameAssets/Tilesets/data/{}.sha".format(TILESETS[self.tileset_id]["A3"]), "r") as file:
 			content = file.read()
 			for i, hitbox in enumerate(content):
 				self.tiles["A3"][i].hitbox = int(hitbox)
@@ -1538,14 +1538,14 @@ class Tileset:
 			tile.set_hitbox(1)
 			self.tiles["A4"].append(tile)
 
-		with open("GameAssets\\Tilesets\\data\\{}.sha".format(TILESETS[self.tileset_id]["A4"]), "r") as file:
+		with open(os.getcwd() + "/GameAssets/Tilesets/data/{}.sha".format(TILESETS[self.tileset_id]["A4"]), "r") as file:
 			content = file.read()
 			for i, hitbox in enumerate(content):
 				self.tiles["A4"][i].hitbox = int(hitbox)
 			file.close()
 
 	def load_A5(self):
-		tileset_picture = pygame.image.load("GameAssets\\Tilesets\\pictures\\{}.png".format(TILESETS[self.tileset_id]["A5"])).convert_alpha()
+		tileset_picture = pygame.image.load(os.getcwd() + "/GameAssets/Tilesets/pictures/{}.png".format(TILESETS[self.tileset_id]["A5"])).convert_alpha()
 		nb_tile_x = tileset_picture.get_width()//48
 		nb_tile_y = tileset_picture.get_height()//48
 		for y in range(nb_tile_y):
@@ -1554,14 +1554,14 @@ class Tileset:
 				tile.load_picture(TILESETS[self.tileset_id]["A5"], (x*cts.TILE_SIZE, y*cts.TILE_SIZE), type="unique")
 				self.tiles["A5"].append(tile)
 
-		with open("GameAssets\\Tilesets\\data\\{}.sha".format(TILESETS[self.tileset_id]["A5"]), "r") as file:
+		with open(os.getcwd() + "/GameAssets/Tilesets/data/{}.sha".format(TILESETS[self.tileset_id]["A5"]), "r") as file:
 			content = file.read()
 			for i, hitbox in enumerate(content):
 				self.tiles["A5"][i].hitbox = int(hitbox)
 			file.close()
 
 	def load_B(self):
-		tileset_picture = pygame.image.load("GameAssets\\Tilesets\\pictures\\{}.png".format(TILESETS[self.tileset_id]["B"])).convert_alpha()
+		tileset_picture = pygame.image.load(os.getcwd() + "/GameAssets/Tilesets/pictures/{}.png".format(TILESETS[self.tileset_id]["B"])).convert_alpha()
 		nb_tile_x = tileset_picture.get_width()//48
 		nb_tile_y = tileset_picture.get_height()//48
 		for j in range(nb_tile_y):
@@ -1576,14 +1576,14 @@ class Tileset:
 				tile.load_picture(TILESETS[self.tileset_id]["B"], ((i+nb_tile_x//2)*cts.TILE_SIZE, j*cts.TILE_SIZE), type="unique")
 				self.tiles["B"].append(tile)
 
-		with open("GameAssets\\Tilesets\\data\\{}.sha".format(TILESETS[self.tileset_id]["B"]), "r") as file:
+		with open(os.getcwd() + "/GameAssets/Tilesets/data/{}.sha".format(TILESETS[self.tileset_id]["B"]), "r") as file:
 			content = file.read()
 			for i, hitbox in enumerate(content):
 				self.tiles["B"][i].hitbox = int(hitbox)
 			file.close()
 
 	def load_C(self):
-		tileset_picture = pygame.image.load("GameAssets\\Tilesets\\pictures\\{}.png".format(TILESETS[self.tileset_id]["C"])).convert_alpha()
+		tileset_picture = pygame.image.load(os.getcwd() + "/GameAssets/Tilesets/pictures/{}.png".format(TILESETS[self.tileset_id]["C"])).convert_alpha()
 		nb_tile_x = tileset_picture.get_width()//48
 		nb_tile_y = tileset_picture.get_height()//48
 		for j in range(nb_tile_y):
@@ -1598,7 +1598,7 @@ class Tileset:
 				tile.load_picture(TILESETS[self.tileset_id]["C"], ((i+nb_tile_x//2)*cts.TILE_SIZE, j*cts.TILE_SIZE), type="unique")
 				self.tiles["C"].append(tile)
 
-		with open("GameAssets\\Tilesets\\data\\{}.sha".format(TILESETS[self.tileset_id]["C"]), "r") as file:
+		with open(os.getcwd() + "/GameAssets/Tilesets/data/{}.sha".format(TILESETS[self.tileset_id]["C"]), "r") as file:
 			content = file.read()
 			for i, hitbox in enumerate(content):
 				self.tiles["B"][i].hitbox = int(hitbox)
@@ -1696,7 +1696,7 @@ def init_tilesets():
 
 def init_maps():
 	global MAPS
-	MAPS = {map.name: map for map in [Map("GameAssets\\Maps\\{}".format(filename)) for filename in os.listdir("GameAssets\\Maps")]}
+	MAPS = {map.name: map for map in [Map(os.getcwd() + "/GameAssets/Maps/{}".format(filename)) for filename in os.listdir(os.getcwd() + "/GameAssets/Maps")]}
 
 def init():
 	init_tilesets()

@@ -1,4 +1,4 @@
-#!usr/bin/env python
+#!usr/bin/env python3
 #-*-coding: utf-8-*-
 
 #§ Création des variables d'informations
@@ -11,6 +11,7 @@ import GameEngine as GE
 import tkinter as tk
 import tkinter.filedialog as fd
 import pygame
+import os
 
 #§ Création des variables globales du script
 GE.constants.WINDOW_SIZE = (19*48, 19*48)
@@ -54,12 +55,12 @@ class App:
 		self.current_map = "default"
 
 		# Création des images de l'app
-		self.icon_new_file = pygame.image.load("GameAssets\\MapGenerator\\new-file.png").convert_alpha()
-		self.icon_save_file = pygame.image.load("GameAssets\\MapGenerator\\save.png").convert_alpha()
-		self.icon_load_file = pygame.image.load("GameAssets\\MapGenerator\\open-folder-with-document.png").convert_alpha()
-		self.icon_pencil = pygame.image.load("GameAssets\\MapGenerator\\edit.png").convert_alpha()
-		self.icon_rectangle = pygame.image.load("GameAssets\\MapGenerator\\rectangle.png").convert_alpha()
-		self.icon_filler = pygame.image.load("GameAssets\\MapGenerator\\paint-brush.png").convert_alpha()
+		self.icon_new_file = pygame.image.load(os.getcwd() + "/GameAssets/MapGenerator/new-file.png").convert_alpha()
+		self.icon_save_file = pygame.image.load(os.getcwd() + "/GameAssets/MapGenerator/save.png").convert_alpha()
+		self.icon_load_file = pygame.image.load(os.getcwd() + "/GameAssets/MapGenerator/open-folder-with-document.png").convert_alpha()
+		self.icon_pencil = pygame.image.load(os.getcwd() + "/GameAssets/MapGenerator/edit.png").convert_alpha()
+		self.icon_rectangle = pygame.image.load(os.getcwd() + "/GameAssets/MapGenerator/rectangle.png").convert_alpha()
+		self.icon_filler = pygame.image.load(os.getcwd() + "/GameAssets/MapGenerator/paint-brush.png").convert_alpha()
 
 		# Création des variables system de l'app
 		self.fps = GE.constants.MIN_FPS
@@ -99,9 +100,9 @@ class App:
 				fen.destroy()
 			else:
 				self.current_map = name
-				with open("GameAssets\\Maps\\{}.sha".format(name), "w") as file: file.close()
+				with open(os.getcwd() + "/GameAssets/Maps/{}.sha".format(name), "w") as file: file.close()
 				MAP = GE.mapsystem.Map()
-				MAP.filename = "GameAssets\\Maps\\{}.sha".format(name)
+				MAP.filename = os.getcwd() + "/GameAssets/Maps/{}.sha".format(name)
 				MAP.name = name
 				MAP.tileset_id = tileset
 				MAP.size = (size_x, size_y)
