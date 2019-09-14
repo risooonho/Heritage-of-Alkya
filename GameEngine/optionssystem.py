@@ -6,9 +6,10 @@ __authors__ = "Lightpearl"
 
 #§ Importation des modules complémentaires nécéssaires
 from pygame.locals import *
+import os
 
 #§ Création des constantes du module
-OPTION_PATH = "GameData/options.sha"
+OPTION_PATH = os.getcwd() + "/GameData/options.sha"
 
 class Options:
     """

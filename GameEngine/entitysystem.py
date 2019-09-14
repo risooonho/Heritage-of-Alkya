@@ -66,7 +66,7 @@ class Entity:
 	def render(self, fps):
 		pictures = self.sprites[self.facing]
 		if self.is_walking:
-			frame = self.current_frame//int(fps*self.walk_speed)%2
+			frame = self.current_frame//int(max(cts.MIN_FPS, fps)*self.walk_speed)%2
 			if frame == 1:
 				frame += 1
 			picture = pictures[frame]

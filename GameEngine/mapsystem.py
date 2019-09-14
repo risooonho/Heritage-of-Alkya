@@ -1697,7 +1697,7 @@ class Map:
 					n8 = int(tile_id in self.tile_map[min(self.size[0]-1, x+1)][min(self.size[1]-1, y+1)])
 					neighborhood = str(n1)+str(n2)+str(n3)+str(n4)+str(n5)+str(n6)+str(n7)+str(n8)
 					pictures = self.tileset[tile_id].pictures[self.tileset[tile_id].picture_choice_mapping[neighborhood]]
-					picture = pictures[self.current_frame//int(fps*cts.TILE_ANIMATION_PERIOD)%self.tileset[tile_id].nb_frames]
+					picture = pictures[self.current_frame//int(max(cts.MIN_FPS, fps)*cts.TILE_ANIMATION_PERIOD)%self.tileset[tile_id].nb_frames]
 					if self.tileset[tile_id].hitbox < 2:
 						self.layout1.blit(picture, display_pos)
 					else:

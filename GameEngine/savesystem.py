@@ -4,6 +4,8 @@
 __version__ = "1.0.0"
 __authors__ = "Lightpearl"
 
+import os
+
 #§ Création des objets du module
 class Save:
 	"""
@@ -15,7 +17,7 @@ class Save:
 		self.time_played = 0
 
 	def save(self):
-		with open("GameData\\save_{}.sha".format(self.id), "w") as file:
+		with open(os.getcwd() + "/GameData/save_{}.sha".format(self.id), "w") as file:
 			file.write("Save of the game [Heritage of Alkya]\n\n")
 			file.write("<System Informations>\n")
 			file.write("TimePlayed: {}\n".format(self.time_played))
@@ -25,7 +27,7 @@ class Save:
 			file.close()
 
 	def load(self):
-		with open("GameData\\save_{}.sha".format(self.id), "r") as file:
+		with open(os.getcwd() + "/GameData/save_{}.sha".format(self.id), "r") as file:
 			for line in file:
 				if ": " in line:
 					label, content = line[:-1].split(": ")

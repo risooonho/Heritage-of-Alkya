@@ -15,4 +15,5 @@ pygame.init()
 
 display = pygame.display.set_mode(cts.WINDOW_SIZE, cts.HWSURFACE | cts.DOUBLEBUF)
 
-GE.scenesystem.SCENES["TitleScreen"].loop(display)
+GE.scenesystem.SCENES["MapScene"].load_map("default")
+GE.scenesystem.SCENES["MapScene"].loop(display)

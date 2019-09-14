@@ -7,6 +7,7 @@ __authors__ = "Lightpearl"
 #§ Importation des modules complémentaires nécéssaires
 from . import constants as cts
 from . import widget
+from . import mapsystem
 import pygame
 
 #§ Création des objets du module
@@ -26,9 +27,11 @@ class BaseScene:
 			"special 2": self.special_2
 		}
 		self.specialevents = []
+		self.specialeventsdelay = {}
 		self.specialeventsdict = {}
+		self.clock = pygame.time.Clock()
 		self.running = False
-		self.max_fps = 10000
+		self.max_fps = cts.MAX_FPS
 
 	def action(self, mod):
 		pass
@@ -57,14 +60,20 @@ class BaseScene:
 	def render(self):
 		self.surface.fill((0, 0, 0, 0))
 
+	def add_special_event(self, id, period, func):
+		self.specialevents.append(id)
+		self.specialeventsdelay[id] = period
+		self.specialeventsdict[id] = func
+
 	def loop(self, display):
 		self.running = True
 		self.display = display
 
-		clock = pygame.time.Clock()
+		for added_event in self.specialevents:
+			pygame.time.set_timer(added_event, self.specialeventsdelay[added_event])
 
 		while self.running:
-			clock.tick(self.max_fps)
+			self.clock.tick(self.max_fps)
 			for event in pygame.event.get():
 				if event.type == cts.QUIT:
 					pygame.quit()
@@ -281,10 +290,40 @@ class NewSaveScene(BaseScene):
 		for widget in self.widgets:
 			widget.blit(self.surface)
 
+class MapScene(BaseScene):
+	"""
+	"""
+	def __init__(self):
+		BaseScene.__init__(self)
+		self.map_name = None
+		self.fps = cts.MIN_FPS
+		self.add_special_event(cts.USEREVENT+1, 2000, self.update_fps)
+		self.camera_pos = (0, 0)
+
+	def update_fps(self):
+		self.fps = self.clock.get_fps()
+
+	def load_map(self, map_name):
+		if not mapsystem.IS_INITIALIZED:
+			mapsystem.init()
+		self.map_name = map_name
+
+	def render(self):
+		if not self.map_name is None:
+			mapsystem.MAPS[self.map_name].update(self.fps, self.camera_pos)
+		if mapsystem.IS_INITIALIZED:
+			self.surface.fill((0, 0, 0, 0))
+			self.surface.blit(mapsystem.MAPS[self.map_name].layout1, (0, 0))
+			self.surface.blit(mapsystem.MAPS[self.map_name].entities_layout0, (0, 0))
+			self.surface.blit(mapsystem.MAPS[self.map_name].entities_layout1, (0, 0))
+			self.surface.blit(mapsystem.MAPS[self.map_name].layout2, (0, 0))
+			self.surface.blit(mapsystem.MAPS[self.map_name].entities_layout2, (0, 0))
+
 #§ Variables globales du module
 SCENES = {
 	"TitleScreen": TitleScreen(),
 	"Options": OptionScene(),
 	"SaveChooser": SaveChooserScene(),
-	"NewSave": NewSaveScene()
+	"NewSave": NewSaveScene(),
+	"MapScene": MapScene()
 }

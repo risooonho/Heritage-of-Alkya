@@ -7,6 +7,7 @@ __authors__ = "Lightpearl"
 #§ Importation des modules complémentaires nécéssaires
 from . import constants as cts
 import pygame
+import os
 
 #§ Création des objets du module
 class BaseWidget:
@@ -306,7 +307,7 @@ class SaveBox(BaseWidget):
 		return "{}J{}H{}m{}s".format(j, h, m, s)
 
 	def load_infos(self):
-		with open("GameData\\save_{}.sha".format(self.save_id), "r") as file:
+		with open(os.getcwd() + "/GameData/save_{}.sha".format(self.save_id), "r") as file:
 			for line in file:
 				if ": " in line:
 					label, content = line[:-1].split(": ")
