@@ -23,7 +23,7 @@ WINDOW_SIZE = (WINDOW_SIZE_X, WINDOW_SIZE_Y)
 TILE_ANIMATION_PERIOD = 0.25 #s
 SPEED_WALK = 0.5 #s
 SPEED_SPRINT = 0.25 #s
-SPEED_GOD = 1/30 #s
+SPEED_GOD = 0.1 #s
 
 #§ Variables de fréquence
 MIN_FPS = 1/SPEED_GOD
@@ -38,6 +38,3 @@ save = savesystem.Save()
 
 #§ Variables de chemins
 OPTION_PATH = optionssystem.OPTION_PATH
-
-#§ Variables de system
-NB_WORKER_MAPUPDATE = 1

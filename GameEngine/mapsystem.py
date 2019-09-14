@@ -18,6 +18,8 @@ TILESETS = [
 
 MAPS = {}
 
+IS_INITIALIZED = False
+
 #§ Création des objets du module
 class Tile:
 	"""
@@ -1620,14 +1622,18 @@ class Map:
 		self.bgm = ""
 		self.tileset = TILESETS_OBJECTS[0]
 		self.tiles = []
+		self.entities = []
 		if filename:
 			self.load_file()
 		self.tile_map = [[[("B", 0)] for _ in range(self.size[1])] for _ in range(self.size[0])]
-		self.hitbox_map = [[0 for _ in range(self.size[1])] for _ in range(self.size[0])]
+		self.hitbox_map = [[-1 for _ in range(self.size[1])] for _ in range(self.size[0])]
 		self.convert_tile()
 		self.current_frame = 0
 		self.layout1 = pygame.Surface(cts.WINDOW_SIZE, HWSURFACE | SRCALPHA)
 		self.layout2 = pygame.Surface(cts.WINDOW_SIZE, HWSURFACE | SRCALPHA)
+		self.entities_layout0 = pygame.Surface(cts.WINDOW_SIZE, HWSURFACE | SRCALPHA)
+		self.entities_layout1 = pygame.Surface(cts.WINDOW_SIZE, HWSURFACE | SRCALPHA)
+		self.entities_layout2 = pygame.Surface(cts.WINDOW_SIZE, HWSURFACE | SRCALPHA)
 
 	def load_file(self):
 		with open(self.filename, "r") as file:
@@ -1661,6 +1667,16 @@ class Map:
 				if self.tileset[self.tile_map[x][y][-1]].hitbox == 1:
 					self.hitbox_map[x][y] = 1
 
+	def entity_hitbox_map(self):
+		result = [[-1 for _ in range(self.size[1])] for _ in range(self.size[0])]
+		for entity in self.entities:
+			result[entity.pos[0]][entity.pos[1]] = entity.hitbox
+		return result
+
+	def can_pass(entity, pos):
+		entity_hitbox_map = self.entity_hitbox_map()
+		return self.hitbox_map[pos[0]][pos[1]] < entity.hitbox and entity_hitbox_map[pos[0]][pos[1]] < entity.hitbox
+
 	def update(self, fps, camera):
 		self.layout1.fill((0, 0, 0, 0))
 		self.layout2.fill((0, 0, 0, 0))
@@ -1689,6 +1705,22 @@ class Map:
 
 		self.current_frame += 1
 
+		self.entities_layout0.fill((0, 0, 0, 0))
+		self.entities_layout1.fill((0, 0, 0, 0))
+		self.entities_layout2.fill((0, 0, 0, 0))
+
+		for entity in self.entities:
+			if entity.is_moving:
+				entity.move(fps)
+			x, y = entity.on_screen_pos(camera)
+			if 0 <= x <= cts.WINDOW_X and 0 <= y <= cts.WINDOW_Y:
+				if entity.hitbox == 0:
+					self.entities_layout0.blit(entity.render(), (x, y))
+				elif entity.hitbox == 1:
+					self.entities_layout1.blit(entity.render(), (x, y))
+				else:
+					self.entities_layout2.blit(entity.render(), (x, y))
+
 #§ Création des fonctions du module
 def init_tilesets():
 	for i in range(len(TILESETS)):
@@ -1701,3 +1733,5 @@ def init_maps():
 def init():
 	init_tilesets()
 	init_maps()
+	global IS_INITIALIZED
+	IS_INITIALIZED = True
